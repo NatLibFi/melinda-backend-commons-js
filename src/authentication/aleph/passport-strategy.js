@@ -27,7 +27,7 @@
 */
 import {BasicStrategy} from 'passport-http';
 import {createService} from './service';
-import AuthenticationError from '../../error';
+import {Error as AuthenticationError} from '@natlibfi/melinda-commons';
 
 export default class extends BasicStrategy {
   constructor({xServiceURL, userLibrary, ownAuthzURL, ownAuthzApiKey}) {

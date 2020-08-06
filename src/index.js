@@ -27,7 +27,7 @@
 */
 
 import * as Authentication from './authentication';
-import * as Utils from './utils';
 
+export * from './utils';
 export {default as Error} from './error';
-export {Authentication, Utils};
+export {Authentication};

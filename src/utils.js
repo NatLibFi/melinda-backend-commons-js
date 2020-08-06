@@ -80,12 +80,11 @@ function createLoggerOptions() {
 }
 
 export function handleInterrupt(arg) {
-	if (arg instanceof Error) {
-		console.error(`Uncaught Exception: ${arg.stack}`);
-		// Signal
-	} else {
-		console.log(`Received ${arg}`);
-	}
+  if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statement
+    console.error(`Uncaught Exception: ${arg.stack}`); // eslint-disable-line no-console
+    process.exit(1); // eslint-disable-line no-process-exit
+  }
 
-	process.exit(1);
+  console.log(`Received ${arg}`); // eslint-disable-line no-console
+  process.exit(1); // eslint-disable-line no-process-exit
 }

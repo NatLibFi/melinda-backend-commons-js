@@ -31,7 +31,7 @@ import passport from 'passport';
 import uuid from 'uuid/v4';
 import {BasicStrategy} from 'passport-http';
 import {Strategy as BearerStrategy} from 'passport-http-bearer';
-import {clone} from '../utils';
+import {clone} from '@natlibfi/melinda-commons';
 
 import {
   BearerCredentialsStrategy as CrowdCredentialsStrategy,

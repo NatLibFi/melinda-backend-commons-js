@@ -32,7 +32,7 @@ import {expect} from 'chai';
 import HttpStatus from 'http-status';
 import nock from 'nock';
 import * as testContext from './service';
-import AuthenticationError from '../../error';
+import {Error as AuthenticationError} from '@natlibfi/melinda-commons';
 
 const FIXTURES_PATH = path.join(__dirname, '../../../test-fixtures/authentication');
 const authnResponse1 = fs.readFileSync(path.resolve(FIXTURES_PATH, 'authnResponse1.xml'), 'utf8');

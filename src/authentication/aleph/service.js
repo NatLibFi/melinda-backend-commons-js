@@ -29,8 +29,7 @@ import HttpStatus from 'http-status';
 import fetch from 'node-fetch';
 import {URL} from 'url';
 import {DOMParser} from 'xmldom';
-import {generateAuthorizationHeader} from '../../utils';
-import AuthenticationError from '../../error';
+import {generateAuthorizationHeader, Error as AuthenticationError} from '@natlibfi/melinda-commons';
 
 export function createService({xServiceURL, userLibrary, ownAuthzURL, ownAuthzApiKey}) {
   const xBaseURL = new URL(xServiceURL);
