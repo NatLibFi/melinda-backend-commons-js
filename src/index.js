@@ -29,5 +29,4 @@
 import * as Authentication from './authentication';
 
 export * from './utils';
-export {default as Error} from './error';
 export {Authentication};
