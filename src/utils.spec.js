@@ -31,9 +31,8 @@ import path from 'path';
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {
-  generateAuthorizationHeader, isDeletedRecord, readEnvironmentVariable,
-  generateEncryptionKey, encryptString, decryptString, parseBoolean, clone,
-  getRecordTitle, getRecordStandardIdentifiers,
+  readEnvironmentVariable,
+  generateEncryptionKey, encryptString, decryptString,
   __RewireAPI__ as RewireAPI
 } from './utils';
 
@@ -42,39 +41,6 @@ MarcRecord.setValidationOptions({subfieldValues: false});
 const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/utils');
 
 describe('utils', () => {
-  describe('generateAuthorizationHeader', () => {
-    it('Should create a proper Authorization header', () => {
-      const value = generateAuthorizationHeader('foo', 'bar');
-      expect(value).to.equal('Basic Zm9vOmJhcg==');
-    });
-  });
-
-  describe('isDeletedRecord', () => {
-    it('Should find the record deleted (Leader)', () => {
-      const data = fs.readFileSync(path.join(FIXTURES_PATH, 'isDeletedRecord/record1.json'), 'utf8');
-      const record = new MarcRecord(JSON.parse(data));
-      expect(isDeletedRecord(record)).to.equal(true);
-    });
-
-    it('Should find the record deleted (DEL)', () => {
-      const data = fs.readFileSync(path.join(FIXTURES_PATH, 'isDeletedRecord/record2.json'), 'utf8');
-      const record = new MarcRecord(JSON.parse(data));
-      expect(isDeletedRecord(record)).to.equal(true);
-    });
-
-    it('Should find the record deleted (STA)', () => {
-      const data = fs.readFileSync(path.join(FIXTURES_PATH, 'isDeletedRecord/record3.json'), 'utf8');
-      const record = new MarcRecord(JSON.parse(data));
-      expect(isDeletedRecord(record)).to.equal(true);
-    });
-
-    it('Should find the record not deleted', () => {
-      const data = fs.readFileSync(path.join(FIXTURES_PATH, 'isDeletedRecord/record4.json'), 'utf8');
-      const record = new MarcRecord(JSON.parse(data));
-      expect(isDeletedRecord(record)).to.equal(false);
-    });
-  });
-
   describe('readEnvironmentVariable', () => {
     afterEach(() => {
       delete process.env.FOO; // eslint-disable-line functional/immutable-data, no-process-env
@@ -114,95 +80,43 @@ describe('utils', () => {
       const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'generateEncryptionKey/bytes.txt'), 'utf8');
       const expectedKey = fs.readFileSync(path.join(FIXTURES_PATH, 'generateEncryptionKey/expectedKey.txt'), 'utf8');
 
-      RewireAPI.__Rewire__('randomBytes', () => bytes);
+      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
 
       expect(generateEncryptionKey()).to.equal(expectedKey);
     });
   });
 
   describe('encryptString', () => {
+    afterEach(() => {
+      RewireAPI.__ResetDependency__('randomBytes');
+    });
+
     it('Should encrypt the string', () => {
+      const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/bytes.txt'), 'utf8');
       const key = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/key1.txt'), 'utf8');
       const value = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/string1.txt'), 'utf8');
       const expectedValue = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/expectedValue1.txt'), 'utf8');
 
-      expect(encryptString({key, value, algorithm: 'aes128'})).to.equal(expectedValue);
+      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
+
+      expect(encryptString({key, value})).to.equal(expectedValue);
     });
   });
 
   describe('descryptString', () => {
+    afterEach(() => {
+      RewireAPI.__ResetDependency__('randomBytes');
+    });
+
     it('Should decrypt the string', () => {
+      const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/bytes.txt'), 'utf8');
       const key = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/key1.txt'), 'utf8');
       const value = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/string1.txt'), 'utf8');
       const expectedValue = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/expectedValue1.txt'), 'utf8');
 
-      expect(decryptString({key, value, algorithm: 'aes128'})).to.equal(expectedValue);
-    });
-  });
+      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
 
-  describe('parseBoolean', () => {
-    it('Should parse undefined as false', () => {
-      expect(parseBoolean(undefined)).to.equal(false);
-    });
-
-    it('Should parse zero-length string as false', () => {
-      expect(parseBoolean('')).to.equal(false);
-    });
-
-    it('Should parse numericish value as true', () => {
-      expect(parseBoolean('1')).to.equal(true);
-    });
-
-    it('Should parse numericush value as false', () => {
-      expect(parseBoolean('0')).to.equal(false);
-    });
-
-    it('Should parse literal \'false\' value as false', () => {
-      expect(parseBoolean('false')).to.equal(false);
-    });
-
-    it('Should parse non-numericish value as true', () => {
-      expect(parseBoolean('foo')).to.equal(true);
-    });
-  });
-
-  describe('getRecordTitle', () => {
-    [
-      'Should find a title',
-      'Should not find a title'
-    ].forEach((descr, index) => {
-      it(descr, () => {
-        const title = fs.readFileSync(path.join(FIXTURES_PATH, `getRecordTitle/title${index}.txt`), 'utf8');
-        const recordData = fs.readFileSync(path.join(FIXTURES_PATH, `getRecordTitle/record${index}.json`), 'utf8');
-        const record = new MarcRecord(JSON.parse(recordData));
-
-        expect(getRecordTitle(record)).to.equal(title);
-      });
-    });
-  });
-
-  describe('getRecordStandardIdentifiers', () => {
-    [
-      'Should find identifiers',
-      'Should not find an identifier'
-    ].forEach((descr, index) => {
-      it(descr, () => {
-        const identifiers = JSON.parse(fs.readFileSync(path.join(FIXTURES_PATH, `getRecordStandardIdentifiers/identifiers${index}.json`), 'utf8'));
-        const recordData = fs.readFileSync(path.join(FIXTURES_PATH, `getRecordStandardIdentifiers/record${index}.json`), 'utf8');
-        const record = new MarcRecord(JSON.parse(recordData));
-
-        expect(getRecordStandardIdentifiers(record)).to.eql(identifiers);
-      });
-    });
-  });
-
-  describe('clone', () => {
-    it('Should clone an object', (index = '1') => {
-      const obj = JSON.parse(fs.readFileSync(path.join(FIXTURES_PATH, `clone/${index}/obj.json`), 'utf8'));
-      const cloned = clone(obj);
-
-      expect(obj).to.not.equal(cloned);
-      expect(cloned).to.eql(obj);
+      expect(decryptString({key, value})).to.equal(expectedValue);
     });
   });
 });

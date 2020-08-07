@@ -29,6 +29,7 @@
 import expressWinston from 'express-winston';
 import winston from 'winston';
 import moment from 'moment';
+import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
@@ -87,4 +88,21 @@ export function handleInterrupt(arg) {
 
   console.log(`Received ${arg}`); // eslint-disable-line no-console
   process.exit(1); // eslint-disable-line no-process-exit
+}
+
+export function generateEncryptionKey() {
+  return randomBytes(32).toString('hex');
+}
+
+export function encryptString({key, value}) {
+  const iv = randomBytes(16);
+  const Cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'hex'), iv);
+  const encrypted = Cipher.update(value, 'utf8');
+  return Buffer.concat([iv, encrypted, Cipher.final()]).toString('base64');
+}
+
+export function decryptString({key, value}) {
+  const input = Buffer.from(value, 'base64');
+  const Decipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'hex'), input.slice(0, 16));
+  return Decipher.update(input.slice(16), 'utf8', 'utf8') + Decipher.final('utf8');
 }

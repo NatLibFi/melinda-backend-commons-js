@@ -14,11 +14,12 @@
 		"url": "git@github.com:natlibfi/melinda-backend-commons-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.1",
 	"main": "./dist/index.js",
 	"bin": {
-		"gen-jwt-token": "./dist/gen-jwt-token.js"
-	},	
+		"gen-jwt-token": "./dist/gen-jwt-token.js",
+		"gen-encryption-key": "./dist/gen-encryption-key.js"
+	},
 	"engines": {
 		"node": ">=12"
 	},
@@ -30,8 +31,8 @@
 		"lint": "eslint src",
 		"lint:dev": "eslint --fix src",
 		"test:base": "cross-env NODE_ENV=test nyc mocha --require @babel/register",
-		"test": "npm run lint && npm run test:base -- src/*.spec.js && npm run coverage",
-		"test:dev": "npm run lint:dev && npm run test:base -- src/*.spec.js && npm run coverage",
+		"test": "npm run lint && npm run test:base -- src/*.spec.js src/**/**/*.spec.js",
+		"test:dev": "npm run lint:dev && npm run test:base -- src/*.spec.js src/**/**/*.spec.js && npm run coverage",
 		"coverage": "nyc check-coverage --per-file",
 		"build": "babel src --source-maps --copy-files --delete-dir-on-start --out-dir=dist",
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
@@ -62,15 +63,17 @@
 		"@natlibfi/eslint-config-melinda-backend": "^1.0.3",
 		"@natlibfi/fixugen-http-client": "^1.0.0",
 		"@natlibfi/fixura": "^2.1.2",
+		"@natlibfi/marc-record": "^6.0.0",
 		"babel-eslint": "^10.1.0",
 		"babel-plugin-istanbul": "^6.0.0",
+		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
 		"cross-env": "^7.0.2",
 		"eslint": "^7.0.0",
 		"mocha": "^8.1.1",
+		"nock": "^13.0.3",
 		"nodemon": "^2.0.4",
-		"nyc": "^15.0.1",
-		"nock": "^13.0.3"
+		"nyc": "^15.0.1"
 	},
 	"eslintConfig": {
 		"extends": "@natlibfi/melinda-backend"
@@ -87,7 +90,8 @@
 		"env": {
 			"test": {
 				"plugins": [
-					"istanbul"
+					"istanbul",
+					"rewire"
 				]
 			}
 		}

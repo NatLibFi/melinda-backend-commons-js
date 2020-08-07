@@ -84,30 +84,34 @@ export function createService({xServiceURL, userLibrary, ownAuthzURL, ownAuthzAp
       function getData(index = 0, data = {}) {
         const node = nodeList.item(index);
 
-        if (node.nodeName === 'z66-email') {
-          return getData(index + 1, {
-            ...data,
-            emails: [{value: node.textContent, type: 'work'}]
-          });
+        if (node) {
+          if (node.nodeName === 'z66-email') {
+            return getData(index + 1, {
+              ...data,
+              emails: [{value: node.textContent, type: 'work'}]
+            });
+          }
+
+          if (node.nodeName === 'z66-name') {
+            return getData(index + 1, {
+              ...data,
+              displayName: node.textContent,
+              name: parseName(node.textContent)
+            });
+
+          }
+
+          if (node.nodeName === 'z66-department') {
+            return getData(index + 1, {
+              ...data,
+              organization: [{name: node.textContent}]
+            });
+          }
+
+          return getData(index + 1, data);
         }
 
-        if (node.nodeName === 'z66-name') {
-          return getData(index + 1, {
-            ...data,
-            displayName: node.textContent,
-            name: parseName(node.textContent)
-          });
-
-        }
-
-        if (node.nodeName === 'z66-department') {
-          return getData(index + 1, {
-            ...data,
-            organization: [{name: node.textContent}]
-          });
-        }
-
-        return getData(index + 1, data);
+        return data;
 
         function parseName(value) {
           const parts = value.split(/ /u);
@@ -116,8 +120,8 @@ export function createService({xServiceURL, userLibrary, ownAuthzURL, ownAuthzAp
             familyName: parts.slice(-1)[0]
           };
 
-          if (parts.length > 0) {
-            return {...obj, middleName: parts.join(' ')};
+          if (parts.length > 2) {
+            return {...obj, middleName: parts[2].join(' ')};
           }
 
           return obj;
