@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-backend-commons-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "1.0.0-alpha.1",
+	"version": "1.0.0-alpha.2",
 	"main": "./dist/index.js",
 	"bin": {
 		"gen-jwt-token": "./dist/gen-jwt-token.js",
@@ -38,7 +38,7 @@
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/melinda-commons": "file:../melinda-commons-js",
+		"@natlibfi/melinda-commons": "^9.0.0-alpha.1",
 		"@natlibfi/passport-atlassian-crowd": "^2.0.3",
 		"base64-url": "^2.3.3",
 		"debug": "^4.1.1",
