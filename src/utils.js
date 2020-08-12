@@ -46,6 +46,18 @@ export function readEnvironmentVariable(name, {defaultValue = undefined, hideDef
   return format(process.env[name]); // eslint-disable-line no-process-env
 }
 
+export function parseBoolean(value) {
+	if (value === undefined) {
+		return false;
+	}
+
+	if (Number.isNaN(Number(value))) {
+		return value.length > 0 && value !== 'false';
+	}
+
+	return Boolean(Number(value));
+}
+
 export function createLogger(options = {}) {
   return winston.createLogger({...createLoggerOptions(), ...options});
 }
@@ -105,4 +117,26 @@ export function decryptString({key, value}) {
   const input = Buffer.from(value, 'base64');
   const Decipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'hex'), input.slice(0, 16));
   return Decipher.update(input.slice(16), 'utf8', 'utf8') + Decipher.final('utf8');
+}
+
+export function toAlephId(id) {
+	return id.padStart(9, '0');
+}
+
+export function fromAlephId(id) {
+	return id.replace(/^0+/, '');
+}
+
+export function logError(err) {
+	if (err instanceof ApiError) {
+		logger.log('error', JSON.stringify(err));
+		return;
+	}
+
+	if (err === 'SIGINT') {
+		logger.log('error', err);
+		return;
+	}
+
+	logger.log('error', err.stack === undefined ? err : err.stack);
 }

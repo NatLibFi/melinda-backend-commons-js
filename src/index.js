@@ -27,6 +27,8 @@
 */
 
 import * as Authentication from './authentication';
+import {createSubrecordPicker} from './subRecordPicker';
+import {createApiClient} from './api-client';
 
 export * from './utils';
-export {Authentication};
+export {Authentication, createApiClient, createSubrecordPicker};
