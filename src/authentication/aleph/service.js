@@ -121,7 +121,7 @@ export function createService({xServiceURL, userLibrary, ownAuthzURL, ownAuthzAp
           };
 
           if (parts.length > 2) {
-            return {...obj, middleName: parts[2].join(' ')};
+            return {...obj, middleName: parts.slice(2).join(' ')};
           }
 
           return obj;
