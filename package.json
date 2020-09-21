@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-backend-commons-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "1.0.6",
+	"version": "2.0.0",
 	"main": "./dist/index.js",
 	"bin": {
 		"gen-jwt-token": "./dist/gen-jwt-token.js",
@@ -38,21 +38,12 @@
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/melinda-commons": "^10.0.0",
-		"@natlibfi/passport-atlassian-crowd": "^2.0.3",
 		"base64-url": "^2.3.3",
 		"debug": "^4.1.1",
 		"express-winston": "^4.0.5",
-		"http-status": "^1.4.2",
 		"moment": "^2.27.0",
-		"node-fetch": "^2.6.0",
-		"passport": ">=0.4.1 <1.0.0",
-		"passport-http": ">=0.3.0 <1.0.0",
-		"passport-http-bearer": "^1.0.1",
 		"uuid": "^8.3.0",
-		"winston": "^3.3.3",
-		"xml2js": ">=0.4.23 <1.0.0",
-		"xmldom": ">=0.3.0 <1.0.0"
+		"winston": "^3.3.3"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.10.1",
@@ -61,8 +52,6 @@
 		"@babel/preset-env": "^7.10.1",
 		"@babel/register": "^7.10.1",
 		"@natlibfi/eslint-config-melinda-backend": "^1.0.3",
-		"@natlibfi/fixugen-http-client": "^1.0.0",
-		"@natlibfi/fixura": "^2.1.2",
 		"@natlibfi/marc-record": "^6.0.4",
 		"babel-eslint": "^10.1.0",
 		"babel-plugin-istanbul": "^6.0.0",
