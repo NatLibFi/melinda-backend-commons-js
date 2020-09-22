@@ -26,7 +26,4 @@
 *
 */
 
-import * as Authentication from './authentication';
-
 export * from './utils';
-export {Authentication};
