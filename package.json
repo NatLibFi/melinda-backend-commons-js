@@ -21,7 +21,7 @@
 		"gen-encryption-key": "./dist/gen-encryption-key.js"
 	},
 	"engines": {
-		"node": ">=12"
+		"node": ">=14"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -40,7 +40,7 @@
 	"dependencies": {
 		"base64-url": "^2.3.3",
 		"debug": "^4.3.2",
-		"express-winston": "^4.1.0",
+		"express-winston": "^4.2.0",
 		"moment": "^2.29.1",
 		"uuid": "^8.3.2",
 		"winston": "^3.3.3"
@@ -48,12 +48,12 @@
 	"devDependencies": {
 		"@babel/cli": "^7.14.8",
 		"@babel/core": "^7.14.8",
+		"@babel/eslint-parser": "^7.14.7",
 		"@babel/node": "^7.14.7",
 		"@babel/preset-env": "^7.14.8",
 		"@babel/register": "^7.14.5",
-		"@natlibfi/eslint-config-melinda-backend": "^1.0.6",
+		"@natlibfi/eslint-config-melinda-backend": "^1.1.1",
 		"@natlibfi/marc-record": "^6.1.1",
-		"@babel/eslint-parser": "^7.14.7",
 		"babel-plugin-istanbul": "^6.0.0",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.3.4",
