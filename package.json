@@ -52,7 +52,7 @@
 		"@babel/node": "^7.14.7",
 		"@babel/preset-env": "^7.14.8",
 		"@babel/register": "^7.14.5",
-		"@natlibfi/eslint-config-melinda-backend": "^1.1.1-alpha.1",
+		"@natlibfi/eslint-config-melinda-backend": "^1.1.1",
 		"@natlibfi/marc-record": "^6.1.1",
 		"babel-plugin-istanbul": "^6.0.0",
 		"babel-plugin-rewire": "^1.2.0",
