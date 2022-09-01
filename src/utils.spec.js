@@ -29,14 +29,11 @@
 import fs from 'fs';
 import path from 'path';
 import {expect} from 'chai';
-import {MarcRecord} from '@natlibfi/marc-record';
 import {
   readEnvironmentVariable,
   generateEncryptionKey, encryptString, decryptString,
   __RewireAPI__ as RewireAPI
 } from './utils';
-
-MarcRecord.setValidationOptions({subfieldValues: false});
 
 const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/utils');
 
