@@ -30,6 +30,7 @@ import expressWinston from 'express-winston';
 import winston from 'winston';
 import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
+import prettyPrint from 'pretty-print-ms';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
@@ -105,4 +106,16 @@ export function decryptString({key, value}) {
   const input = Buffer.from(value, 'base64');
   const Decipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'hex'), input.slice(0, 16));
   return Decipher.update(input.slice(16), 'utf8', 'utf8') + Decipher.final('utf8');
+}
+
+export function logWait(logger, waitTime) {
+  // 900000 ms = 15 min
+  if (waitTime % 900000 === 0) {
+    return logger.verbose(`Total wait: ${prettyPrint(waitTime)}`);
+  }
+  // 60000ms = 1min
+  if (waitTime % 60000 === 0) {
+    return logger.debug(`Total wait: ${prettyPrint(waitTime)}`);
+  }
+  return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
 }
