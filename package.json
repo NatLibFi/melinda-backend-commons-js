@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-backend-commons-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "2.0.7",
+	"version": "2.1.0-alpha.1",
 	"main": "./dist/index.js",
 	"bin": {
 		"gen-jwt-token": "./dist/gen-jwt-token.js",
