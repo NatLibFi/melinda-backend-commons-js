@@ -33,7 +33,7 @@ import {encode as b64Encode} from 'base64-url';
 const {JWT_KEY: jwtKey} = process.env; // eslint-disable-line no-process-env
 const [,, id] = process.argv;
 
-if (jwtKey && id) { // eslint-disable-line functional/no-conditional-statement
+if (jwtKey && id) { // eslint-disable-line functional/no-conditional-statements
   const payload = {id};
   const header = {
     alg: 'HS256',

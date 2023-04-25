@@ -34,7 +34,7 @@ import prettyPrint from 'pretty-print-ms';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
-    if (defaultValue === undefined) { // eslint-disable-line functional/no-conditional-statement
+    if (defaultValue === undefined) { // eslint-disable-line functional/no-conditional-statements
       throw new Error(`Mandatory environment variable missing: ${name}`);
     }
 
@@ -82,7 +82,7 @@ function createLoggerOptions() {
 }
 
 export function handleInterrupt(arg) {
-  if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statement
+  if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statements
     console.error(`Uncaught Exception: ${arg.stack}`); // eslint-disable-line no-console
     process.exit(1); // eslint-disable-line no-process-exit
   }
@@ -118,4 +118,27 @@ export function logWait(logger, waitTime) {
     return logger.debug(`Total wait: ${prettyPrint(waitTime)}`);
   }
   return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
+}
+
+export function joinObjects(obj, ojectToBeJoined, arrayOfKeysWanted = []) {
+  // Add the new items to the object if they are not undefined
+  if (arrayOfKeysWanted.length > 0) {
+    arrayOfKeysWanted.forEach(wantedKey => {
+      if (ojectToBeJoined[wantedKey] !== undefined) {
+        obj[wantedKey] = ojectToBeJoined[wantedKey]; // eslint-disable-line functional/immutable-data
+        return;
+      }
+    });
+
+    return;
+  }
+
+  Object.keys(ojectToBeJoined).forEach(key => {
+    if (ojectToBeJoined[key] !== undefined) {
+      obj[key] = ojectToBeJoined[key]; // eslint-disable-line functional/immutable-data
+      return;
+    }
+
+    return;
+  });
 }
