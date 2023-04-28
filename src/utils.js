@@ -120,12 +120,12 @@ export function logWait(logger, waitTime) {
   return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
 }
 
-export function joinObjects(obj, ojectToBeJoined, arrayOfKeysWanted = []) {
+export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
   // Add the new items to the object if they are not undefined
   if (arrayOfKeysWanted.length > 0) {
     arrayOfKeysWanted.forEach(wantedKey => {
-      if (ojectToBeJoined[wantedKey] !== undefined) {
-        obj[wantedKey] = ojectToBeJoined[wantedKey]; // eslint-disable-line functional/immutable-data
+      if (objectToBeJoined[wantedKey] !== undefined) {
+        obj[wantedKey] = objectToBeJoined[wantedKey]; // eslint-disable-line functional/immutable-data
         return;
       }
     });
@@ -133,9 +133,9 @@ export function joinObjects(obj, ojectToBeJoined, arrayOfKeysWanted = []) {
     return;
   }
 
-  Object.keys(ojectToBeJoined).forEach(key => {
-    if (ojectToBeJoined[key] !== undefined) {
-      obj[key] = ojectToBeJoined[key]; // eslint-disable-line functional/immutable-data
+  Object.keys(objectToBeJoined).forEach(key => {
+    if (objectToBeJoined[key] !== undefined) {
+      obj[key] = objectToBeJoined[key]; // eslint-disable-line functional/immutable-data
       return;
     }
 
