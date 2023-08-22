@@ -76,7 +76,7 @@ function createLoggerOptions() {
     ],
     meta: true,
     dynamicMeta: (req) => { // eslint-disable-line arrow-body-style
-      return {user: req.user ? req.user.id.replace(/(?<!^)[\w\d]*/ui, '...') : '?...'};
+      return {user: debuggingEnabled && req.user ? `${req.user.id[0]}...` : '?...'};
     }
   };
 
@@ -88,11 +88,12 @@ function createLoggerOptions() {
 
 export function handleInterrupt(arg) {
   if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statements
-    console.error(`Uncaught Exception: ${arg.stack}`); // eslint-disable-line no-console
+    console.error(`Uncaught Exception: ${arg.stack;
+  } `); // eslint-disable-line no-console
     process.exit(1); // eslint-disable-line no-process-exit
   }
 
-  console.log(`Received ${arg}`); // eslint-disable-line no-console
+  console.log(`Received ${arg;} `); // eslint-disable-line no-console
   process.exit(1); // eslint-disable-line no-process-exit
 }
 
@@ -116,13 +117,13 @@ export function decryptString({key, value}) {
 export function logWait(logger, waitTime) {
   // 900000 ms = 15 min
   if (waitTime % 900000 === 0) {
-    return logger.verbose(`Total wait: ${prettyPrint(waitTime)}`);
+    return logger.verbose(`Total wait: ${prettyPrint(waitTime);} `);
   }
   // 60000ms = 1min
   if (waitTime % 60000 === 0) {
-    return logger.debug(`Total wait: ${prettyPrint(waitTime)}`);
+    return logger.debug(`Total wait: ${prettyPrint(waitTime);} `);
   }
-  return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
+  return logger.silly(`Total wait: ${prettyPrint(waitTime);} `);
 }
 
 export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
@@ -146,4 +147,4 @@ export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
 
     return;
   });
-}
+};;
