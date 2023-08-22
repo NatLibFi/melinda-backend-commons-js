@@ -52,13 +52,22 @@ export function createLogger(options = {}) {
 }
 
 export function createExpressLogger(options = {}) {
+  const user = req.user?.id ? parseUser(req.user.id) : '?'
+
   return expressWinston.logger({
     meta: true,
-    msg: '{{req.ip}} HTTP {{req.method}} {{req.path}} - {{res.statusCode}} {{res.responseTime}}ms',
+    msg: '{{req.ip}} HTTP {{req.method}} {{req.path}} : {{user}} - {{res.statusCode}} {{res.responseTime}}ms',
     ignoreRoute: () => false,
     ...createLoggerOptions(),
     ...options
   });
+
+  function parseUser(userId = false) {
+    if (userId) {
+      return userId.replace(/(?<!^)[\w\d]*(?!$)/ui, '...');
+    }
+    return '?';
+  }
 }
 
 function createLoggerOptions() {
