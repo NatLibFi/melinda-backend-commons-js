@@ -52,8 +52,6 @@ export function createLogger(options = {}) {
 }
 
 export function createExpressLogger(options = {}) {
-  const user = req.user?.id ? parseUser(req.user.id) : '?'
-
   return expressWinston.logger({
     meta: true,
     msg: '{{req.ip}} HTTP {{req.method}} {{req.path}} : {{user}} - {{res.statusCode}} {{res.responseTime}}ms',
@@ -61,13 +59,6 @@ export function createExpressLogger(options = {}) {
     ...createLoggerOptions(),
     ...options
   });
-
-  function parseUser(userId = false) {
-    if (userId) {
-      return userId.replace(/(?<!^)[\w\d]*(?!$)/ui, '...');
-    }
-    return '?';
-  }
 }
 
 function createLoggerOptions() {
@@ -82,13 +73,18 @@ function createLoggerOptions() {
         level: logLevel,
         silent: process.env.NODE_ENV === 'test' && !debuggingEnabled // eslint-disable-line no-process-env
       })
-    ]
+    ],
+    meta: true,
+    dynamicMeta: (req) => { // eslint-disable-line arrow-body-style
+      return {user: req.user ? req.user.id.replace(/(?<!^)[\w\d]*/ui, '...') : '?...'};
+    }
   };
 
   function formatMessage({timestamp, level, message}) {
     return `${timestamp} - ${level}: ${message}`;
   }
 }
+
 
 export function handleInterrupt(arg) {
   if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statements
