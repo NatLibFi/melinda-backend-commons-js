@@ -54,7 +54,7 @@ export function createLogger(options = {}) {
 export function createExpressLogger(options = {}) {
   return expressWinston.logger({
     meta: true,
-    msg: '{{req.ip}} HTTP {{req.method}} {{req.path}} : {{user}} - {{res.statusCode}} {{res.responseTime}}ms ',
+    msg: '{{req.ip}} HTTP {{req.method}} {{req.path}} : {{user}} - {{res.statusCode}} {{res.responseTime}}ms',
     ignoreRoute: () => false,
     ...createLoggerOptions(),
     ...options
@@ -81,18 +81,18 @@ function createLoggerOptions() {
   };
 
   function formatMessage({timestamp, level, message}) {
-    return `${timestamp} - ${level}: ${message} `;
+    return `${timestamp} - ${level}: ${message}`;
   }
 }
 
 
 export function handleInterrupt(arg) {
   if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statements
-    console.error(`Uncaught Exception: ${arg.stack} `); // eslint-disable-line no-console
+    console.error(`Uncaught Exception: ${arg.stack}`); // eslint-disable-line no-console
     process.exit(1); // eslint-disable-line no-process-exit
   }
 
-  console.log(`Received ${arg} `); // eslint-disable-line no-console
+  console.log(`Received ${arg}`); // eslint-disable-line no-console
   process.exit(1); // eslint-disable-line no-process-exit
 }
 
@@ -116,13 +116,13 @@ export function decryptString({key, value}) {
 export function logWait(logger, waitTime) {
   // 900000 ms = 15 min
   if (waitTime % 900000 === 0) {
-    return logger.verbose(`Total wait: ${prettyPrint(waitTime)} `);
+    return logger.verbose(`Total wait: ${prettyPrint(waitTime)}`);
   }
   // 60000ms = 1min
   if (waitTime % 60000 === 0) {
-    return logger.debug(`Total wait: ${prettyPrint(waitTime)} `);
+    return logger.debug(`Total wait: ${prettyPrint(waitTime)}`);
   }
-  return logger.silly(`Total wait: ${prettyPrint(waitTime)} `);
+  return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
 }
 
 export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
