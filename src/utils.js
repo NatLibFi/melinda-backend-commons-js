@@ -109,8 +109,8 @@ export function encryptString({key, value}) {
 
 export function decryptString({key, value}) {
   const input = Buffer.from(value, 'base64');
-  const Decipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'hex'), input.slice(0, 16));
-  return Decipher.update(input.slice(16), 'utf8', 'utf8') + Decipher.final('utf8');
+  const Decipher = createDecipheriv('aes-256-ctr', Buffer.from(key, 'hex'), input.subarray(0, 16));
+  return Decipher.update(input.subarray(16), 'utf8', 'utf8') + Decipher.final('utf8');
 }
 
 export function logWait(logger, waitTime) {
