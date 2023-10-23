@@ -38,6 +38,10 @@ export function readEnvironmentVariable(name, {defaultValue = undefined, hideDef
       throw new Error(`Mandatory environment variable missing: ${name}`);
     }
 
+    if (typeof defaultValue === 'boolean') {
+      return Boolean(defaultValue);
+    }
+
     const defaultValuePrintable = typeof defaultValue === 'object' ? JSON.stringify(defaultValue) : defaultValue;
 
     console.error(`No environment variable set for ${name}, using default value: ${hideDefault ? '[hidden]' : defaultValuePrintable}`); // eslint-disable-line no-console
