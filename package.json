@@ -43,8 +43,8 @@
 		"express-winston": "^4.2.0",
 		"moment": "^2.29.4",
 		"pretty-print-ms": "^1.0.5",
-		"uuid": "^9.0.0",
-		"winston": "^3.10.0"
+		"uuid": "^9.0.1",
+		"winston": "^3.11.0"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.22.9",
