@@ -51,15 +51,15 @@ describe('utils', () => {
       expect(readEnvironmentVariable('FOO')).to.equal('bar');
     });
 
-    it('Should use  a default value for environment', () => {
+    it('Should use  a default value for environment variable', () => {
       expect(readEnvironmentVariable('FOO', {defaultValue: 'fubar'})).to.equal('fubar');
     });
 
-    it('Should use a boolean default value for environment', () => {
+    it('Should use a boolean default value for environment variable', () => {
       expect(readEnvironmentVariable('FOO', {defaultValue: false})).to.equal(false);
     });
 
-    it('Should not log the default value', () => {
+    it('Should not log the default value for environment variable', () => {
       expect(readEnvironmentVariable('FOO', {defaultValue: 'fubar', hideDefault: true})).to.equal('fubar');
     });
 
