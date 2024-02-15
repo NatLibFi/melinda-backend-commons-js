@@ -32,6 +32,8 @@ import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 import prettyPrint from 'pretty-print-ms';
 
+import createDebugLogger from 'debug';
+
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
     if (defaultValue === undefined) { // eslint-disable-line functional/no-conditional-statements
@@ -145,4 +147,43 @@ export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
 
     return;
   });
+}
+
+/**
+ * Creates webhook operator interface which allows using sendNotification function to send messages using HTTP
+ * requests. Requests are POST requests and given text is placed into 'text' attribute in request body.
+ * @param {string} WEBHOOK_URL Webhook URL. Remember to define this as secret that is read from env variable.
+ * @returns {Object} Object containing sendNotification function
+ */
+export function createWebhookOperator(WEBHOOK_URL = false) {
+  const debug = createDebugLogger('@natlibfi/melinda-backend-commons:sendNotification');
+  const URL = WEBHOOK_URL;
+
+  if (typeof URL !== 'string') {
+    throw new Error('Webhook URL is not defined');
+  }
+
+  if (!URL.startsWith('https')) {
+    throw new Error('Webhook URL needs to use https');
+  }
+
+  return {sendNotification};
+
+  async function sendNotification(text) {
+    const method = 'POST';
+    const headers = {type: 'application/json'};
+    const body = JSON.stringify({text});
+
+    try {
+      const response = await fetch(URL, {method, headers, body});
+      if (response.ok) {
+        return true;
+      }
+
+      throw new Error(`HTTP response status was not ok (${response.status})`);
+    } catch (err) {
+      debug(`Encountered problem when sending notification: ${err.message}`);
+      throw new Error('Sending notification webhook failed');
+    }
+  }
 }

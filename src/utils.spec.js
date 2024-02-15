@@ -29,13 +29,15 @@
 import fs from 'fs';
 import path from 'path';
 import {expect} from 'chai';
+import nock from 'nock'; // As of 2024-02-15 requires beta for Node experimental native fetch to work
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import {
   readEnvironmentVariable,
   generateEncryptionKey, encryptString, decryptString,
   __RewireAPI__ as RewireAPI,
-  joinObjects
+  joinObjects,
+  createWebhookOperator
 } from './utils';
 
 const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/utils');
@@ -121,6 +123,47 @@ describe('utils', () => {
       RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
 
       expect(decryptString({key, value})).to.equal(expectedValue);
+    });
+  });
+
+  describe('createWebhookOperator', () => {
+    after(() => {
+      nock.cleanAll();
+      nock.enableNetConnect(); // Re--enable sending http request to anywhere
+    });
+
+    before(() => {
+      nock.disableNetConnect(); // Disallow sending http request to anywhere else but pre-defined scopes
+    });
+
+    beforeEach(() => {
+      nock.cleanAll(); // Make sure previous mocks do not affect the currently starting test
+    });
+
+    it('Should return interface with sendNotification function that sends request to webhook URL', async () => {
+      const webhookDomain = 'https://example.com';
+      const webhookPath = '/foo/bar/1234';
+      const webhookUrl = `${webhookDomain}${webhookPath}`;
+      const notificationText = 'Foo';
+
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath, {text: notificationText})
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator(webhookUrl);
+      const result = await webhookOperator.sendNotification(notificationText);
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(true);
+    });
+
+    it('Should throw error when initializing interface without URL', () => {
+      expect(() => createWebhookOperator()).to.throw('Webhook URL is not defined');
+    });
+
+    it('Should throw error when initializing interface with URL that uses http', () => {
+      expect(() => createWebhookOperator('http://example.com')).to.throw('Webhook URL needs to use https');
     });
   });
 });
