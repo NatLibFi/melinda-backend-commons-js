@@ -150,9 +150,13 @@ describe('utils', () => {
         profile: 'foobar',
         id: 'foo',
         correlationId: 'bar',
-        numberOfRecords: 3,
+        numberOfRecords: 12,
         failedRecords: 2,
-        processedRecords: 1
+        processedRecords: 10,
+        created: 4,
+        updated: 3,
+        skipped: 2,
+        error: 1
       };
       const templateOptions = {
         template: 'blob',

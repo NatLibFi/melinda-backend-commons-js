@@ -54,7 +54,7 @@
                 },
                 {
                   "type": "text",
-                  "text": "3"
+                  "text": "12"
                 }
               ]
             },
@@ -80,9 +80,61 @@
                 },
                 {
                   "type": "text",
-                  "text": "1"
+                  "text": "10"
                 }
               ]
+            },
+            {
+              "elements": [
+                {
+                  "text": "Created records: ",
+                  "type": "text"
+                },
+                {
+                  "text": "4",
+                  "type": "text"
+                }
+              ],
+              "type": "rich_text_section"
+            },
+            {
+              "elements": [
+                {
+                  "text": "Updated records: ",
+                  "type": "text"
+                },
+                {
+                  "text": "3",
+                  "type": "text"
+                }
+              ],
+              "type": "rich_text_section"
+            },
+            {
+              "elements": [
+                {
+                  "text": "Skipped records: ",
+                  "type": "text"
+                },
+                {
+                  "text": "2",
+                  "type": "text"
+                }
+              ],
+              "type": "rich_text_section"
+            },
+            {
+              "elements": [
+                {
+                  "text": "Error records: ",
+                  "type": "text"
+                },
+                {
+                  "text": "1",
+                  "type": "text"
+                }
+              ],
+              "type": "rich_text_section"
             }
           ]
         }
