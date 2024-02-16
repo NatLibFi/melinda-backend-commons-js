@@ -3,8 +3,8 @@ import winston from 'winston';
 import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 import prettyPrint from 'pretty-print-ms';
-
 import createDebugLogger from 'debug';
+
 import {generateBlobNotification} from './notificationTemplates';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
@@ -142,13 +142,19 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
 
   return {sendNotification};
 
-  async function sendNotification(text, template = false, options = {}) {
+  /**
+   * Sends notification as POST requests and given text is placed into 'text' attribute in request body.
+   * @param {Object} bodyData as default must contain {text: '<message>'} on template use it contains template custom data
+   * @param {?Object} options as default {template: false} on template use it contains template name and other options
+   * @returns {boolean} was notification send ok
+   */
+  async function sendNotification(bodyData, options = {template: false}) {
     const method = 'POST';
     const headers = {type: 'application/json'};
 
     try {
-      if (template === 'blob') {
-        const body = JSON.stringify(generateBlobNotification(text, options));
+      if (options.template === 'blob') {
+        const body = JSON.stringify(generateBlobNotification(bodyData, options));
         const response = await fetch(URL, {method, headers, body});
         if (response.ok) {
           return true;
@@ -157,7 +163,7 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
         throw new Error(`HTTP response status was not ok (${response.status})`);
       }
 
-      const body = JSON.stringify({text});
+      const body = JSON.stringify(bodyData);
       const response = await fetch(URL, {method, headers, body});
       if (response.ok) {
         return true;

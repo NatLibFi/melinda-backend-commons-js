@@ -117,10 +117,10 @@ describe('utils', () => {
     });
 
     it('Should return interface with sendNotification function that sends request to webhook URL', async () => {
-      const notificationText = 'Foo';
+      const notificationText = {text: 'Foo'};
       // Nock interceptor to mock HTTP request response
       const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath, {text: notificationText})
+        .post(webhookPath, body => expect(body).to.eql(notificationText))
         .reply(200);
 
       const webhookOperator = createWebhookOperator(webhookUrl);
@@ -139,7 +139,7 @@ describe('utils', () => {
         .reply(200);
 
       const webhookOperator = createWebhookOperator(webhookUrl);
-      const result = await webhookOperator.sendNotification({}, 'blob', {});
+      const result = await webhookOperator.sendNotification({}, {template: 'blob'});
 
       expect(result).to.eq(true);
       expect(scope.isDone()).to.eq(true);
@@ -155,6 +155,7 @@ describe('utils', () => {
         processedRecords: 1
       };
       const templateOptions = {
+        template: 'blob',
         environment: 'TEST',
         baseUrl: webhookDomain
       };
@@ -167,7 +168,7 @@ describe('utils', () => {
         .reply(200);
 
       const webhookOperator = createWebhookOperator(webhookUrl);
-      const result = await webhookOperator.sendNotification(notificationText, 'blob', templateOptions);
+      const result = await webhookOperator.sendNotification(notificationText, templateOptions);
 
       expect(result).to.eq(true);
       expect(scope.isDone()).to.eq(true);
