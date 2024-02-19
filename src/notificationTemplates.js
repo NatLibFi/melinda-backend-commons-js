@@ -11,163 +11,208 @@ export function generateBlobNotification({
   error = 0
 }, {environment = false, baseUrl = ''}) {
   return {
-    'blocks':
-      [
-        {
-          'type': 'header',
-          'text':
+    'blocks': [
+      {
+        'type': 'header',
+        'text': {
+          'type': 'plain_text',
+          'text': `${environment ? `${environment} - ` : ''}Record import blob: ${profile}`,
+          'emoji': true
+        }
+      },
+      {
+        'type': 'divider'
+      },
+      {
+        'type': 'rich_text',
+        'elements': [
           {
-            'type': 'plain_text',
-            'text': `${environment ? `${environment} - ` : ''}Record import blob: ${profile}`,
-            'emoji': true
-          }
-        },
-        {
-          'type': 'divider'
-        },
-        {
-          'type': 'rich_text',
-          'elements':
-            [
+            'type': 'rich_text_section',
+            'elements': [
               {
-                'type': 'rich_text_list',
-                'style': 'bullet',
-                'elements':
-                  [
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Id: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${id}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Correlation id: '
-                          },
-                          {
-                            'type': 'link',
-                            'url': `${baseUrl}/?id=${correlationId}`,
-                            'text': `${correlationId}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Number of records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${numberOfRecords}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Failed records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${failedRecords}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Processed records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${processedRecords}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Created records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${created}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Updated records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${updated}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Skipped records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${skipped}`
-                          }
-                        ]
-                    },
-                    {
-                      'type': 'rich_text_section',
-                      'elements':
-                        [
-                          {
-                            'type': 'text',
-                            'text': 'Error records: '
-                          },
-                          {
-                            'type': 'text',
-                            'text': `${error}`
-                          }
-                        ]
-                    }
-                  ]
+                'type': 'text',
+                'text': 'Id: ',
+                'style': {
+                  'bold': true
+                }
+              },
+              {
+                'type': 'text',
+                'text': `${id}`
               }
             ]
-        },
-        {
-          'type': 'divider'
-        }
-      ]
+          },
+          {
+            'type': 'rich_text_section',
+            'elements': [
+              {
+                'type': 'text',
+                'text': 'Correlation id: ',
+                'style': {
+                  'bold': true
+                }
+              },
+              {
+                'type': 'link',
+                'url': `${baseUrl}/?id=${correlationId}`,
+                'text': `${correlationId}`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'type': 'rich_text',
+        'elements': [
+          {
+            'type': 'rich_text_section',
+            'elements': [
+              {
+                'type': 'text',
+                'text': 'Transformation results',
+                'style': {
+                  'bold': true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'type': 'rich_text',
+        'elements': [
+          {
+            'type': 'rich_text_list',
+            'style': 'bullet',
+            'indent': 1,
+            'elements': [
+              {
+                'type': 'rich_text_section',
+                'elements': [
+                  {
+                    'type': 'text',
+                    'text': 'Number of records: '
+                  },
+                  {
+                    'type': 'text',
+                    'text': `${numberOfRecords}`
+                  }
+                ]
+              },
+              {
+                'type': 'rich_text_section',
+                'elements': [
+                  {
+                    'type': 'text',
+                    'text': 'Failed records: '
+                  },
+                  {
+                    'type': 'text',
+                    'text': `${failedRecords}`
+                  }
+                ]
+              },
+              {
+                'type': 'rich_text_section',
+                'elements': [
+                  {
+                    'type': 'text',
+                    'text': 'Processed records: '
+                  },
+                  {
+                    'type': 'text',
+                    'text': `${processedRecords}`
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'type': 'rich_text',
+        'elements': [
+          {
+            'type': 'rich_text_section',
+            'elements': [
+              {
+                'type': 'text',
+                'text': 'Process results',
+                'style': {
+                  'bold': true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'type': 'rich_text',
+        'elements': [
+          {
+            'type': 'rich_text_list',
+            'style': 'bullet',
+            'indent': 1,
+            'elements': [
+              {
+                'elements': [
+                  {
+                    'text': 'Created records: ',
+                    'type': 'text'
+                  },
+                  {
+                    'text': `${created}`,
+                    'type': 'text'
+                  }
+                ],
+                'type': 'rich_text_section'
+              },
+              {
+                'elements': [
+                  {
+                    'text': 'Updated records: ',
+                    'type': 'text'
+                  },
+                  {
+                    'text': `${updated}`,
+                    'type': 'text'
+                  }
+                ],
+                'type': 'rich_text_section'
+              },
+              {
+                'elements': [
+                  {
+                    'text': 'Skipped records: ',
+                    'type': 'text'
+                  },
+                  {
+                    'text': `${skipped}`,
+                    'type': 'text'
+                  }
+                ],
+                'type': 'rich_text_section'
+              },
+              {
+                'elements': [
+                  {
+                    'text': 'Error records: ',
+                    'type': 'text'
+                  },
+                  {
+                    'text': `${error}`,
+                    'type': 'text'
+                  }
+                ],
+                'type': 'rich_text_section'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'type': 'divider'
+      }
+    ]
   };
 }

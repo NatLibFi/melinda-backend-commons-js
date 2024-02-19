@@ -168,6 +168,7 @@ describe('utils', () => {
 
       // Nock interceptor to mock HTTP request response
       const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        //.post(webhookPath, body => console.log(JSON.stringify(body))) // eslint-disable-line
         .post(webhookPath, body => expect(body).to.eql(JSON.parse(expectedBody)))
         .reply(200);
 
