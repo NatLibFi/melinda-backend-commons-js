@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import {expect} from 'chai';
+import {expect, assert} from 'chai';
 import nock from 'nock'; // As of 2024-02-15 requires beta for Node experimental native fetch to work
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
@@ -158,7 +158,7 @@ describe('utils', () => {
         skipped: 2,
         error: 1
       };
-      const templateOptions = {
+      const options = {
         template: 'blob',
         environment: 'TEST',
         baseUrl: webhookDomain
@@ -172,10 +172,36 @@ describe('utils', () => {
         .reply(200);
 
       const webhookOperator = createWebhookOperator(webhookUrl);
-      const result = await webhookOperator.sendNotification(notificationText, templateOptions);
+      const result = await webhookOperator.sendNotification(notificationText, options);
 
       expect(result).to.eq(true);
       expect(scope.isDone()).to.eq(true);
+    });
+
+    it('Should return test interface with sendNotification function that mocks request', async () => {
+      const notificationText = {text: 'Foo'};
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath)
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator('test');
+      const result = await webhookOperator.sendNotification(notificationText);
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(false);
+    });
+
+    it('Should return test interface with sendNotification function that mocks failing request', () => {
+      const notificationText = {text: 'Foo'};
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath)
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator('test');
+      assert.throws(() => webhookOperator.sendNotification(notificationText, {fail: true}), Error, 'HTTP response status was not ok (MOCK)');
+      expect(scope.isDone()).to.eq(false);
     });
 
     it('Should throw error when initializing interface without URL', () => {
@@ -183,7 +209,7 @@ describe('utils', () => {
     });
 
     it('Should throw error when initializing interface with URL that uses http', () => {
-      expect(() => createWebhookOperator('http://example.com')).to.throw('Webhook URL needs to use https');
+      expect(() => createWebhookOperator('http://foobar')).to.throw('Webhook URL needs to use https');
     });
   });
 });

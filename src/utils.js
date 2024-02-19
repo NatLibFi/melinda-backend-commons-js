@@ -136,6 +136,10 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
     throw new Error('Webhook URL is not defined');
   }
 
+  if (WEBHOOK_URL === 'test') {
+    return {sendNotification: sendNotificationMock};
+  }
+
   if (!URL.startsWith('https')) {
     throw new Error('Webhook URL needs to use https');
   }
@@ -174,5 +178,17 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
       debug(`Encountered problem when sending notification: ${err.message}`);
       throw new Error('Sending notification webhook failed');
     }
+  }
+
+  function sendNotificationMock(bodyData, options = {template: false, fail: false}) {
+    debug('Mock notification!');
+    debug(JSON.stringify(bodyData));
+    debug(JSON.stringify(options));
+
+    if (options.fail) {
+      throw new Error('HTTP response status was not ok (MOCK)');
+    }
+
+    return true;
   }
 }
