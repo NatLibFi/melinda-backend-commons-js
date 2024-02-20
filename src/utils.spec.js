@@ -117,10 +117,11 @@ describe('utils', () => {
     });
 
     it('Should return interface with sendNotification function that sends request to webhook URL', async () => {
-      const notificationText = {text: 'Foo'};
+      const notificationText = 'Foo';
+
       // Nock interceptor to mock HTTP request response
       const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath, body => expect(body).to.eql(notificationText))
+        .post(webhookPath, body => expect(body).to.eql({text: notificationText}))
         .reply(200);
 
       const webhookOperator = createWebhookOperator(webhookUrl);

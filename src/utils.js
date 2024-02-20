@@ -183,11 +183,11 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
   }
 
   function prepareBodyData(bodyData, options) {
-    const creatorFunctions = {
-      blob: generateBlobNotification,
-      basic: generateBasicNotification
-    };
-    const createFunction = creatorFunctions.find(template => options.template === template);
+    const creatorFunctions = [
+      {template: 'blob', func: generateBlobNotification},
+      {template: 'basic', func: generateBasicNotification}
+    ];
+    const {func: createFunction} = creatorFunctions.find(({template}) => options.template === template);
     const objectAsBody = createFunction ? createFunction(bodyData, options) : bodyData;
     return JSON.stringify(objectAsBody);
   }
