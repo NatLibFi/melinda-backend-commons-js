@@ -5,7 +5,7 @@ import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 import prettyPrint from 'pretty-print-ms';
 import createDebugLogger from 'debug';
 
-import {generateBlobNotification} from './notificationTemplates';
+import {generateBasicNotification, generateBlobNotification} from './notificationTemplates';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
@@ -152,22 +152,12 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
    * @param {?Object} options as default {template: false} on template use it contains template name and other options
    * @returns {boolean} was notification send ok
    */
-  async function sendNotification(bodyData, options = {template: false}) {
+  async function sendNotification(bodyData, options = {template: 'basic'}) {
     const method = 'POST';
     const headers = {type: 'application/json'};
 
     try {
-      if (options.template === 'blob') {
-        const body = JSON.stringify(generateBlobNotification(bodyData, options));
-        const response = await fetch(URL, {method, headers, body});
-        if (response.ok) {
-          return true;
-        }
-
-        throw new Error(`HTTP response status was not ok (${response.status})`);
-      }
-
-      const body = JSON.stringify(bodyData);
+      const body = prepareBodyData(bodyData, options);
       const response = await fetch(URL, {method, headers, body});
       if (response.ok) {
         return true;
@@ -190,5 +180,15 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
     }
 
     return true;
+  }
+
+  function prepareBodyData(bodyData, options) {
+    const creatorFunctions = {
+      blob: generateBlobNotification,
+      basic: generateBasicNotification
+    };
+    const createFunction = creatorFunctions.find(template => options.template === template);
+    const objectAsBody = createFunction ? createFunction(bodyData, options) : bodyData;
+    return JSON.stringify(objectAsBody);
   }
 }

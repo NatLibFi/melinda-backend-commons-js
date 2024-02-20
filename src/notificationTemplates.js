@@ -1,3 +1,7 @@
+export function generateBasicNotification(text) {
+  return {text};
+}
+
 export function generateBlobNotification({
   profile = '',
   id = '',
