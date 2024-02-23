@@ -1,36 +1,11 @@
-/**
-*
-* @licstart  The following is the entire license notice for the JavaScript code in this file.
-*
-* Shared modules for Melinda's backend applications
-*
-* Copyright (C) 2018-2022 University Of Helsinki (The National Library Of Finland)
-*
-* This file is part of melinda-backend-commons-js
-*
-* melinda-backend-commons-js program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* melinda-backend-commons-js is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-* @licend  The above is the entire license notice
-* for the JavaScript code in this file.
-*
-*/
-
 import expressWinston from 'express-winston';
 import winston from 'winston';
 import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 import prettyPrint from 'pretty-print-ms';
+import createDebugLogger from 'debug';
+
+import {generateBasicNotification, generateBlobNotification} from './notificationTemplates';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
   if (process.env[name] === undefined) { // eslint-disable-line no-process-env
@@ -145,4 +120,75 @@ export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
 
     return;
   });
+}
+
+/**
+ * Creates webhook operator interface which allows using sendNotification function to send messages using HTTP
+ * requests. Requests are POST requests and given text is placed into 'text' attribute in request body.
+ * @param {string} WEBHOOK_URL Webhook URL. Remember to define this as secret that is read from env variable.
+ * @returns {Object} Object containing sendNotification function
+ */
+export function createWebhookOperator(WEBHOOK_URL = false) {
+  const debug = createDebugLogger('@natlibfi/melinda-backend-commons:sendNotification');
+  const URL = WEBHOOK_URL;
+
+  if (typeof URL !== 'string') {
+    throw new Error('Webhook URL is not defined');
+  }
+
+  if (WEBHOOK_URL === 'test') {
+    return {sendNotification: sendNotificationMock};
+  }
+
+  if (!URL.startsWith('https')) {
+    throw new Error('Webhook URL needs to use https');
+  }
+
+  return {sendNotification};
+
+  /**
+   * Sends notification as POST requests and given text is placed into 'text' attribute in request body.
+   * @param {Object} bodyData as default must contain {text: '<message>'} on template use it contains template custom data
+   * @param {?Object} options as default {template: false} on template use it contains template name and other options
+   * @returns {boolean} was notification send ok
+   */
+  async function sendNotification(bodyData, options = {template: 'basic'}) {
+    const method = 'POST';
+    const headers = {type: 'application/json'};
+
+    try {
+      const body = prepareBodyData(bodyData, options);
+      const response = await fetch(URL, {method, headers, body});
+      if (response.ok) {
+        return true;
+      }
+
+      throw new Error(`HTTP response status was not ok (${response.status})`);
+    } catch (err) {
+      debug(`Encountered problem when sending notification: ${err.message}`);
+      throw new Error('Sending notification webhook failed');
+    }
+  }
+
+  function sendNotificationMock(bodyData, options = {template: false, fail: false}) {
+    debug('Mock notification!');
+    debug(JSON.stringify(bodyData));
+    debug(JSON.stringify(options));
+
+    if (options.fail) {
+      throw new Error('HTTP response status was not ok (MOCK)');
+    }
+
+    return true;
+  }
+
+  function prepareBodyData(bodyData, options) {
+    const creatorFunctions = [
+      {template: 'basic', func: generateBasicNotification},
+      {template: 'blob', func: generateBlobNotification}
+    ];
+    const {func: createFunction} = creatorFunctions.find(({template}) => options.template === template);
+    const objectAsBody = createFunction ? createFunction(bodyData, options) : bodyData;
+    return JSON.stringify(objectAsBody);
+  }
 }
