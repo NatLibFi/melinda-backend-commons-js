@@ -13,7 +13,7 @@ export function generateBlobNotification({
   updated = 0,
   skipped = 0,
   error = 0
-}, {environment = false, baseUrl = ''}) {
+}, {environment = false, linkUrl = ''}) {
   return {
     'blocks': [
       {
@@ -58,7 +58,7 @@ export function generateBlobNotification({
               },
               {
                 'type': 'link',
-                'url': `${baseUrl}/?id=${correlationId}`,
+                'url': `${linkUrl}/?id=${correlationId}`,
                 'text': `${correlationId}`
               }
             ]
