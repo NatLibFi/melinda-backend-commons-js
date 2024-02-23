@@ -162,7 +162,7 @@ describe('utils', () => {
       const options = {
         template: 'blob',
         environment: 'TEST',
-        baseUrl: webhookDomain
+        linkUrl: webhookDomain
       };
 
       const expectedBody = fs.readFileSync(path.join(FIXTURES_PATH, 'sendNotification/templateBlobCustom.json'), 'utf8');
