@@ -1,41 +1,15 @@
-/**
-*
-* @licstart  The following is the entire license notice for the JavaScript code in this file.
-*
-* Shared modules for Melinda's backend applications
-*
-* Copyright (C) 2018-2022 University Of Helsinki (The National Library Of Finland)
-*
-* This file is part of melinda-backend-commons-js
-*
-* melinda-backend-commons-js program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Lesser General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* melinda-backend-commons-js is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-* @licend  The above is the entire license notice
-* for the JavaScript code in this file.
-*
-*/
-
 import fs from 'fs';
 import path from 'path';
-import {expect} from 'chai';
+import {expect, assert} from 'chai';
+import nock from 'nock'; // As of 2024-02-15 requires beta for Node experimental native fetch to work
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import {
   readEnvironmentVariable,
   generateEncryptionKey, encryptString, decryptString,
   __RewireAPI__ as RewireAPI,
-  joinObjects
+  joinObjects,
+  createWebhookOperator
 } from './utils';
 
 const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/utils');
@@ -121,6 +95,123 @@ describe('utils', () => {
       RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
 
       expect(decryptString({key, value})).to.equal(expectedValue);
+    });
+  });
+
+  describe('createWebhookOperator', () => {
+    const webhookDomain = 'https://foo.bar';
+    const webhookPath = '/foo/bar/1234';
+    const webhookUrl = `${webhookDomain}${webhookPath}`;
+
+    after(() => {
+      nock.cleanAll();
+      nock.enableNetConnect(); // Re--enable sending http request to anywhere
+    });
+
+    before(() => {
+      nock.disableNetConnect(); // Disallow sending http request to anywhere else but pre-defined scopes
+    });
+
+    beforeEach(() => {
+      nock.cleanAll(); // Make sure previous mocks do not affect the currently starting test
+    });
+
+    it('Should return interface with sendNotification function that sends request to webhook URL', async () => {
+      const notificationText = 'Foo';
+
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath, body => expect(body).to.eql({text: notificationText}))
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator(webhookUrl);
+      const result = await webhookOperator.sendNotification(notificationText);
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(true);
+    });
+
+    it('Should send request to webhook URL with blob template and default values', async () => {
+      const expectedBody = fs.readFileSync(path.join(FIXTURES_PATH, 'sendNotification/templateBlobDefault.json'), 'utf8');
+
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath, body => expect(body).to.eql(JSON.parse(expectedBody)))
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator(webhookUrl);
+      const result = await webhookOperator.sendNotification({}, {template: 'blob'});
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(true);
+    });
+
+    it('Should send request to webhook URL with blob template custom values', async () => {
+      const notificationText = {
+        profile: 'foobar',
+        id: 'foo',
+        correlationId: 'bar',
+        numberOfRecords: 12,
+        failedRecords: 2,
+        processedRecords: 10,
+        created: 4,
+        updated: 3,
+        skipped: 2,
+        error: 1
+      };
+      const options = {
+        template: 'blob',
+        environment: 'TEST',
+        linkUrl: webhookDomain
+      };
+
+      const expectedBody = fs.readFileSync(path.join(FIXTURES_PATH, 'sendNotification/templateBlobCustom.json'), 'utf8');
+
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        //.post(webhookPath, body => console.log(JSON.stringify(body))) // eslint-disable-line
+        .post(webhookPath, body => expect(body).to.eql(JSON.parse(expectedBody)))
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator(webhookUrl);
+      const result = await webhookOperator.sendNotification(notificationText, options);
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(true);
+    });
+
+    it('Should return test interface with sendNotification function that mocks request', async () => {
+      const notificationText = {text: 'Foo'};
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath)
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator('test');
+      const result = await webhookOperator.sendNotification(notificationText);
+
+      expect(result).to.eq(true);
+      expect(scope.isDone()).to.eq(false);
+    });
+
+    it('Should return test interface with sendNotification function that mocks failing request', () => {
+      const notificationText = {text: 'Foo'};
+      // Nock interceptor to mock HTTP request response
+      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
+        .post(webhookPath)
+        .reply(200);
+
+      const webhookOperator = createWebhookOperator('test');
+      assert.throws(() => webhookOperator.sendNotification(notificationText, {fail: true}), Error, 'HTTP response status was not ok (MOCK)');
+      expect(scope.isDone()).to.eq(false);
+    });
+
+    it('Should throw error when initializing interface without URL', () => {
+      expect(() => createWebhookOperator()).to.throw('Webhook URL is not defined');
+    });
+
+    it('Should throw error when initializing interface with URL that uses http', () => {
+      expect(() => createWebhookOperator('http://foobar')).to.throw('Webhook URL needs to use https');
     });
   });
 });
