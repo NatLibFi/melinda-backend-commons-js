@@ -5,3 +5,4 @@ dist
 .nyc_output
 configCrowd.js
 .DS_Store
+.env
