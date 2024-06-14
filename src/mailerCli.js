@@ -1,4 +1,4 @@
-import {sendEmail} from "./mailer";
+import {sendEmail} from './mailer';
 import fs from 'fs';
 import yargs from 'yargs';
 import {createLogger, handleInterrupt} from './utils.js';
@@ -19,7 +19,7 @@ async function run() {
     .usage('$0 <JSON file> [options] and env variable info in README')
     .showHelpOnFail(true)
     .example([
-      ['$ node $0/dist/cli.js file.json -e example@mail.com -s "Example subject" -t exampleTemplate'],
+      ['$ node $0/dist/cli.js file.json -e example@mail.com -s "Example subject" -t exampleTemplate']
     ])
     .env('MELINDA_MAILER')
     .positional('file', {type: 'string', describe: 'File for template context'})
@@ -27,7 +27,7 @@ async function run() {
       f: {type: 'string', default: false, alias: 'emailFrom', describe: 'Email from'},
       e: {type: 'string', default: false, alias: 'emailTo', describe: 'Email to'},
       s: {type: 'string', default: false, alias: 'subject', describe: 'Email subject'},
-      t: {type: 'string', default: false, alias: 'template', describe: 'Email template'},
+      t: {type: 'string', default: false, alias: 'template', describe: 'Email template'}
     })
     .check((args) => {
       const [file] = args._;
@@ -53,9 +53,9 @@ async function run() {
     to: args.e,
     subject: args.s,
     templateName: args.t,
-    context: context
+    context
   };
-  logger.info(JSON.stringify(messageOptions));
-  logger.info(JSON.stringify(smtpConfig));
+  logger.debug(JSON.stringify(messageOptions));
+  logger.debug(JSON.stringify(smtpConfig));
   await sendEmail({smtpConfig, messageOptions});
 }

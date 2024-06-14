@@ -26,12 +26,12 @@ export async function sendEmail({messageOptions = false, smtpConfig = false}) {
       layoutsDir: viewPath,
       defaultLayout: false,
       //partials directory path
-      partialsDir: partialsPath,
+      partialsDir: partialsPath
     },
     //View path declare
     partialsDir: partialsPath,
-    viewPath: viewPath,
-    extName: '.handlebars',
+    viewPath,
+    extName: '.handlebars'
   }));
 
   // Verify server is ready to accept messages
