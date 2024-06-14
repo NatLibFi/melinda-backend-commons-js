@@ -18,9 +18,9 @@ async function run() {
     .epilog('Copyright (C) 2024 University Of Helsinki (The National Library Of Finland)')
     .usage('$0 <JSON file> [options] and env variable info in README')
     .showHelpOnFail(true)
-    .example([
+    .example(
       ['$ node $0/dist/cli.js file.json -e example@mail.com -s "Example subject" -t exampleTemplate']
-    ])
+    )
     .env('MELINDA_MAILER')
     .positional('file', {type: 'string', describe: 'File for template context'})
     .options({
