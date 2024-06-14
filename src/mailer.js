@@ -15,8 +15,8 @@ export async function sendEmail({messageOptions = false, smtpConfig = false}) {
 
   const viewPath = path.resolve(__dirname, './mailerTemplates/views');
   const partialsPath = path.resolve(__dirname, './mailerTemplates/partials');
-  logger.info(viewPath);
-  logger.info(partialsPath);
+  logger.debug(viewPath);
+  logger.debug(partialsPath);
 
   transporter.use('compile', hbs({
     viewEngine: {
