@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poistot raportti</title>
+  <style type="text/css">
+    /* CLIENT-SPECIFIC STYLES */
+    :root {
+
+      /* MELINDA COLORS ORIGINAL*/
+      --color-melinda-green: #0DB14B;
+      --color-melinda-darkblue: #00224F;
+      --color-melinda-lightblue: #00B3F0;
+
+      /* MELINDA CUSTOM COLORS (MUTED FOR APPLICAITON) */
+      --color-melinda-green-custom: #248f4d;
+      --color-melinda-lightblue-custom: #28a4cf;
+
+      /* PRIMARY COLORS */
+      /*  - blue: primary text colour, main brand colour */
+      /*  - white: secondary text and link colour, primary background colour */
+      --color-primary-blue: #002855;
+      --color-primary-white: #FFFFFF;
+      --color-primary-black: #000000;
+
+
+      /* FUNCTIONAL COLORS */
+      /*  - blue: primary link and button colour, in forms used as a focus colour */
+      /*  - red: warning, error, rejected. Use in forms and alerts */
+      /*  - green: OK, pass, accepted. use in forms and alerts */
+      /*  - yellow: alert, attention, use in only bacground color */
+      --color-functional-blue: #0D2FC4;
+      --color-functional-red: #A0270A;
+      --color-functional-green: #3A785E;
+      --color-functional-yellow: #FAE196;
+    }
+
+    #root {
+      margin-bottom: 10px;
+    }
+
+    .footer {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+      font-family: var(--font-family-content);
+    }
+
+    .footer-filler {
+      flex-grow: 1;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      font-size: 18px;
+      letter-spacing: 0.05rem;
+      line-height: var(--font-line-height-content-medium);
+    }
+
+    /* ************************************************************ */
+
+
+    .footer-heading {
+      padding-bottom: 15px;
+    }
+
+    .footer-heading-small {
+      color: var(--color-primary-white);
+      padding-top: 16px;
+    }
+
+    .footer-text {
+      color: var(--color-primary-white);
+    }
+
+    .footer-paragraph {
+      padding-top: 5px;
+      padding-bottom: 15px;
+      padding-right: 50px;
+      max-width: 750px;
+    }
+
+    .footer-link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .footer a .footer-email {
+      color: var(--color-primary-white);
+    }
+
+    .footer-link {
+      display: flex;
+    }
+
+    .footer a {
+      text-decoration: none;
+    }
+
+    .footer a .footer-link {
+      display: flex;
+      color: var(--color-primary-white);
+      cursor: pointer;
+    }
+
+    .footer-link-text {
+      color: var(--color-primary-white);
+    }
+
+    .footer-link-text a {
+      display: flex;
+      color: var(--color-primary-white);
+    }
+
+    .footer-link:hover .footer-link-text,
+    .footer-email:hover a {
+      text-decoration: underline;
+      text-underline-position: auto;
+    }
+
+    .icon-open-in-new {
+      padding-left: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      justify-content: end;
+      padding-bottom: 5px;
+    }
+
+    .footer-link .icon-arrow {
+      transform: translateX(0px);
+      transition: transform 0.5s;
+    }
+
+    .footer-link:hover .icon-arrow {
+      transform: translateX(10px);
+      transition: transform 0.75s;
+    }
+
+
+    /* ************************************************************ */
+    /* Melinda banner specific styles in footer*/
+
+    .melinda-banner {
+      display: flex;
+      flex-direction: row;
+      flex-grow: 1;
+      color: var(--color-primary-white);
+      background-color: var(--color-melinda-green-custom);
+      padding: 48px;
+      gap: 25px;
+    }
+
+    .melinda-logo-and-contact-info {
+      display: flex;
+      flex-direction: column;
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+
+    .melinda-about,
+    .melinda-links,
+    .melinda-social-media {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .melinda-links,
+    .melinda-social-media {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+
+    .melinda-about {
+      flex-grow: 3;
+      flex-basis: 0;
+    }
+
+    .melinda-contact-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .melinda-logo img {
+      max-height: 150px;
+    }
+
+    .melinda-banner a:hover .footer-link-text,
+    .melinda-banner a:hover .footer-link-icon,
+    .melinda-banner a:hover .footer-email {
+      color: var(--color-primary-blue);
+      text-decoration-color: var(--color-primary-blue);
+    }
+
+    .melinda-banner a:active .footer-link,
+    .melinda-banner .footer-email:active,
+    .melinda-logo a:active {
+      outline-color: var(--color-primary-white);
+      outline-style: solid;
+      outline-width: 0.2rem;
+    }
+
+    .melinda-banner a:active .footer-link {
+      outline-offset: 0.4rem
+    }
+
+    .melinda-banner .footer-email:active {
+      outline-offset: 0.1rem
+    }
+
+    .melinda-logo a:active {
+      outline-offset: 0.6rem
+    }
+
+
+    /* ************************************************************ */
+    /* NatLib banner specific styles in footer*/
+
+    .natlib-banner {
+      display: flex;
+      flex-direction: row;
+      flex-grow: 1;
+      color: var(--color-primary-white);
+      background-color: var(--color-primary-blue);
+      gap: 40px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    .natlib-logo,
+    .natlib-text,
+    .natlib-link {
+      display: flex;
+    }
+
+    .natlib-link {
+      font-family: var(--font-family-content);
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .natlib-text,
+    .natlib-link {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+
+    .natlib-logo img {
+      max-height: 78px;
+    }
+
+    .natlib-text {
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .natlib-banner .footer-link:hover .footer-link-text,
+    .natlib-banner .footer-link:hover .footer-link-icon {
+      color: var(--color-red-80);
+      text-decoration-color: var(--color-red-80);
+    }
+
+    .natlib-logo a:active,
+    .natlib-link a:active {
+      outline-color: var(--color-primary-white);
+      outline-style: solid;
+      outline-width: 0.2rem;
+    }
+
+    .natlib-logo a:active {
+      outline-offset: 0.6rem
+    }
+
+    .natlib-link a:active {
+      outline-offset: 0.4rem
+    }
+  </style>
+</head>
+
+<body>
+  <div id="bodywrapper" class="viewport-full flex-column">
+    {{>header}}
+    <div id="root">
+      <table border="0" cellspacing="0" cellpadding="0" role="presentation" width="100%">
+        <caption>Poistoissa käsitellyt tietueet</caption>
+        <thead>
+          <tr>
+            <th>Nimeke</th>
+            <th>Melinda-ID</th>
+            <th>Tila</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each recordInfo}}
+          <tr>
+            <td>{{this.metadata.title}}</td>
+            <td>{{this.metadata.id}}</td>
+            <td>{{this.status}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{>footer}}
+  </div>
+</body>
+
+</html>
