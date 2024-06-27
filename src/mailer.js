@@ -42,7 +42,7 @@ export async function sendEmail({messageOptions = false, smtpConfig = false}) {
     to,
     subject,
     template: templateName,
-    text_template: `${templateName}-text`,
+    text_template: `${templateName}-text`, // eslint-disable-line camelcase
     context
   };
 
