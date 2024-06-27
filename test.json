@@ -1,0 +1,87 @@
+{
+  "recordInfo": [
+    {
+      "status": "SKIPPED",
+      "metadata": {
+        "id": "019070878",
+        "title": "El abismo del olvido",
+        "standardIdentifiers": [
+          "978-84-19670-22-9"
+        ],
+        "sourceIds": [
+          "(helme)2583916"
+        ],
+        "message": "Found 1 matching records in the database. - No new incoming changes from IMP_HELMET detected while trying to update existing record 019070878, update skipped.",
+        "recordStatusNote": "SKIPPED_UPDATE"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "SKIPPED",
+      "metadata": {
+        "id": "019067592",
+        "title": "Para que serve",
+        "standardIdentifiers": [
+          "978-989-8145-98-7"
+        ],
+        "sourceIds": [
+          "(helme)2584016"
+        ],
+        "message": "Found 1 matching records in the database. - No new incoming changes from IMP_HELMET detected while trying to update existing record 019067592, update skipped.",
+        "recordStatusNote": "SKIPPED_UPDATE"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "ERROR",
+      "metadata": {
+        "id": "000000000",
+        "title": "Uudet sankarit",
+        "standardIdentifiers": [
+          "978-952-373-831-7"
+        ],
+        "sourceIds": [
+          "(FI-BTJ)7463476",
+          "(helme)2584146"
+        ],
+        "message": "MatchValidation for all 1 matches failed. 019049847: field 245 (title) failed",
+        "recordStatusNote": "CONFLICT"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "CREATED",
+      "metadata": {
+        "id": "019071190",
+        "title": "Huijarin tuntee jo tuoksusta",
+        "standardIdentifiers": [
+          "978-87-27-15788-7"
+        ],
+        "sourceIds": [
+          "(FI-BTJ)7466163",
+          "(helme)2585032"
+        ],
+        "message": "Found 0 matching records in the database. - Created record 019071190.",
+        "recordStatusNote": "CREATED"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "UPDATED",
+      "metadata": {
+        "id": "019067771",
+        "title": "Pinnan alla",
+        "standardIdentifiers": [
+          "978-87-27-15789-4"
+        ],
+        "sourceIds": [
+          "(FI-BTJ)7467175",
+          "(helme)2585036"
+        ],
+        "message": "Found 1 matching records in the database. - Merged to 019067771 preferring incoming record. - Updated record 019067771",
+        "recordStatusNote": "UPDATED"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    }
+  ]
+}

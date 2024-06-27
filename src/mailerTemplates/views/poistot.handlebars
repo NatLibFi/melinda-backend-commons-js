@@ -280,15 +280,20 @@
     .natlib-link a:active {
       outline-offset: 0.4rem
     }
+
+    th,
+    caption {
+      text-align: start;
+    }
   </style>
 </head>
 
 <body>
   <div id="bodywrapper" class="viewport-full flex-column">
     {{>header}}
-    <div id="root">
+    <div id="root" style="margin-top: 10px; margin-bottom: 10px;">
+      <h2>Poistoissa käsitellyt tietueet</h2>
       <table border="0" cellspacing="0" cellpadding="0" role="presentation" width="100%">
-        <caption>Poistoissa käsitellyt tietueet</caption>
         <thead>
           <tr>
             <th>Nimeke</th>
