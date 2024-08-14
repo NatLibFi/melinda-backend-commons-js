@@ -10,6 +10,7 @@
   * MELINDA_MAILER_EMAIL_TO: Email to
   * MELINDA_MAILER_SUBJECT: Email subject
   * MELINDA_MAILER_TEMPLATE: Email template name
+  * MELINDA_MAILER_TEMPLATE_TEST: true/false
 
 ## License and copyright
 
