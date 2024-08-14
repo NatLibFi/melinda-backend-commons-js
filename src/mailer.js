@@ -44,7 +44,7 @@ export async function sendEmail({messageOptions = false, smtpConfig = false}) {
 }
 
 
-async function templateHandling(templateName, context) {
+function templateHandling(templateName, context) {
   // Load templates
   const template = readFileSync(path.resolve(__dirname, 'templates', `${templateName}.html`), 'utf8');
   const templateFooter = readFileSync(path.resolve(__dirname, 'templates', 'footer.html'), 'utf8');
@@ -64,4 +64,4 @@ async function templateHandling(templateName, context) {
 
     return filledTemplate;
   }
-};
+}
