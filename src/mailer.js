@@ -53,6 +53,8 @@ async function templateHandling(templateName, context) {
     return fillTemplatePoistot();
   }
 
+  throw new Error('No template found!');
+
   function fillTemplatePoistot() {
     const records = context.recordInfo.map(record => `<p>${record.metadata.title} - ${record.metadata.id} - ${record.status}</p>\n`).join('');
     const blobId = context.blobId ? `<p>Liitäthän viestiisi käsittely id:n ${context.blobId}</p>` : '';
