@@ -16,16 +16,18 @@ async function run() {
     .scriptName('melinda-mailer-cli')
     .wrap(yargs.terminalWidth())
     .epilog('Copyright (C) 2024 University Of Helsinki (The National Library Of Finland)')
-    .usage('$0 <JSON file> [options] and env variable info in README')
+    .usage('$0 <JSON file> [options] (env variable info in README)')
     .showHelpOnFail(true)
-    .example(['$ node $0/dist/cli.js file.json -e example@mail.com -s "Example subject" -t exampleTemplate'])
+    .example([['$ node $0/dist/cli.js file.json --from example@mail.com --to example2@mail.com --sub "Example subject" --temp "exampleTemplate"']])
+    .version()
     .env('MELINDA_MAILER')
-    .positional('file', {type: 'string', describe: 'File for template context'})
+    .positional('JSON file', {type: 'string', describe: 'JSON file for template context'})
     .options({
-      f: {type: 'string', default: false, alias: 'emailFrom', describe: 'Email from'},
-      e: {type: 'string', default: false, alias: 'emailTo', describe: 'Email to'},
-      s: {type: 'string', default: false, alias: 'subject', describe: 'Email subject'},
-      t: {type: 'string', default: false, alias: 'template', describe: 'Email template'}
+      from: {type: 'string', default: false, alias: 'emailFrom', describe: 'Email from'},
+      to: {type: 'string', default: false, alias: 'emailTo', describe: 'Email to'},
+      sub: {type: 'string', default: false, alias: 'subject', describe: 'Email subject'},
+      temp: {type: 'string', default: false, alias: 'template', describe: 'Email template'},
+      dev: {type: 'boolean', default: false, alias: 'development', describe: 'Development mode'}
     })
     .check((args) => {
       const [file] = args._;
@@ -39,7 +41,7 @@ async function run() {
 
       return true;
     })
-    .parseSync();
+    .parse();
 
   // console.log(JSON.stringify(args));
   logger.info(`Reading context file ${args._[0]}`);
@@ -47,13 +49,26 @@ async function run() {
   logger.info('Reading smtp config from env');
   const smtpConfig = JSON.parse(args.smtpConfig);
   const messageOptions = {
-    from: args.f,
-    to: args.e,
-    subject: args.s,
-    templateName: args.t,
+    from: args.from,
+    to: args.to,
+    subject: args.sub,
+    templateName: args.temp,
+    test: args.dev,
     context
   };
   logger.debug(JSON.stringify(messageOptions));
   logger.debug(JSON.stringify(smtpConfig));
+  if (messageOptions.test) {
+    const {html, text} = await sendEmail({smtpConfig, messageOptions});
+    logger.info('Test run!');
+    logger.info('***---***');
+    logger.info(`HTML string:\n${html}`);
+    logger.info('***---***');
+    logger.info(`Text string:\n${text}`);
+    logger.info('***---***');
+
+    return;
+  }
+
   await sendEmail({smtpConfig, messageOptions});
 }

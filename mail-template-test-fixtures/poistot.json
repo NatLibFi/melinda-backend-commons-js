@@ -1,0 +1,87 @@
+{
+  "recordInfo": [
+    {
+      "status": "SKIPPED",
+      "metadata": {
+        "id": "012345678",
+        "title": "Title record 1",
+        "standardIdentifiers": [
+          "978-84-00000-00-0"
+        ],
+        "sourceIds": [
+          "(lib)00001"
+        ],
+        "message": "Found 1 matching records in the database. - No new incoming changes from IMP_HELMET detected while trying to update existing record 012345678, update skipped.",
+        "recordStatusNote": "SKIPPED_UPDATE"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "SKIPPED",
+      "metadata": {
+        "id": "012345678",
+        "title": "Title record 2",
+        "standardIdentifiers": [
+          "978-989-0000-00-0"
+        ],
+        "sourceIds": [
+          "(lib)00001"
+        ],
+        "message": "Found 1 matching records in the database. - No new incoming changes from IMP_HELMET detected while trying to update existing record 012345678, update skipped.",
+        "recordStatusNote": "SKIPPED_UPDATE"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "ERROR",
+      "metadata": {
+        "id": "000000000",
+        "title": "Title record 3",
+        "standardIdentifiers": [
+          "978-952-0000-000-0"
+        ],
+        "sourceIds": [
+          "(lib)7463476",
+          "(lib2)2584146"
+        ],
+        "message": "MatchValidation for all 1 matches failed. 012345678: field 245 (title) failed",
+        "recordStatusNote": "CONFLICT"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "CREATED",
+      "metadata": {
+        "id": "012345678",
+        "title": "Title record 4",
+        "standardIdentifiers": [
+          "978-87-00-00000-0"
+        ],
+        "sourceIds": [
+          "(lib)00001",
+          "(lib2)00001"
+        ],
+        "message": "Found 0 matching records in the database. - Created record 012345678.",
+        "recordStatusNote": "CREATED"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    },
+    {
+      "status": "UPDATED",
+      "metadata": {
+        "id": "012345678",
+        "title": "Title record 5",
+        "standardIdentifiers": [
+          "978-87-00-00000-0"
+        ],
+        "sourceIds": [
+          "(lib)00001",
+          "(lib2)00001"
+        ],
+        "message": "Found 1 matching records in the database. - Merged to 012345678 preferring incoming record. - Updated record 012345678",
+        "recordStatusNote": "UPDATED"
+      },
+      "timestamp": "2024-06-14T06:46:26.113Z"
+    }
+  ]
+}
