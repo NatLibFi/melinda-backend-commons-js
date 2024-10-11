@@ -166,7 +166,8 @@ export function createWebhookOperator(WEBHOOK_URL = false) {
       throw new Error(`HTTP response status was not ok (${response.status})`);
     } catch (err) {
       debug(`Encountered problem when sending notification: ${err.message}`);
-      throw new Error('Sending notification webhook failed');
+      // throw new Error('Sending notification webhook failed');
+      return false;
     }
   }
 
