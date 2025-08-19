@@ -46,7 +46,7 @@
 		"express-winston": "^4.2.0",
 		"html-to-text": "^9.0.5",
 		"moment": "^2.30.1",
-		"nodemailer": "^7.0.3",
+		"nodemailer": "^7.0.5",
 		"pretty-print-ms": "^1.0.5",
 		"rewire": "^9.0.0",
 		"winston": "^3.17.0",
