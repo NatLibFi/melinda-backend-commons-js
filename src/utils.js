@@ -5,11 +5,11 @@ import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
 import prettyPrint from 'pretty-print-ms';
 import createDebugLogger from 'debug';
 
-import {generateBasicNotification, generateBlobNotification} from './notificationTemplates';
+import {generateBasicNotification, generateBlobNotification} from './notificationTemplates.js';
 
 export function readEnvironmentVariable(name, {defaultValue = undefined, hideDefault = false, format = v => v} = {}) {
-  if (process.env[name] === undefined) { // eslint-disable-line no-process-env
-    if (defaultValue === undefined) { // eslint-disable-line functional/no-conditional-statements
+  if (process.env[name] === undefined) {
+    if (defaultValue === undefined) {
       throw new Error(`Mandatory environment variable missing: ${name}`);
     }
 
@@ -23,7 +23,7 @@ export function readEnvironmentVariable(name, {defaultValue = undefined, hideDef
     return defaultValue;
   }
 
-  return format(process.env[name]); // eslint-disable-line no-process-env
+  return format(process.env[name]);
 }
 
 export function createLogger(options = {}) {
@@ -41,7 +41,7 @@ export function createExpressLogger(options = {}) {
 }
 
 function createLoggerOptions() {
-  const logLevel = process.env.LOG_LEVEL || 'info'; // eslint-disable-line no-process-env
+  const logLevel = process.env.LOG_LEVEL || 'info';
   const debuggingEnabled = logLevel === 'debug';
   const timestamp = winston.format(info => ({...info, timestamp: moment().format()}));
 
@@ -50,7 +50,7 @@ function createLoggerOptions() {
     transports: [
       new winston.transports.Console({
         level: logLevel,
-        silent: process.env.NODE_ENV === 'test' && !debuggingEnabled // eslint-disable-line no-process-env
+        silent: process.env.NODE_ENV === 'test' && !debuggingEnabled
       })
     ]
   };
@@ -61,21 +61,21 @@ function createLoggerOptions() {
 }
 
 export function handleInterrupt(arg) {
-  if (arg instanceof Error) { // eslint-disable-line functional/no-conditional-statements
+  if (arg instanceof Error) {
     console.error(`Uncaught Exception: ${arg.stack}`); // eslint-disable-line no-console
-    process.exit(1); // eslint-disable-line no-process-exit
+    process.exit(1);
   }
 
   console.log(`Received ${arg}`); // eslint-disable-line no-console
-  process.exit(1); // eslint-disable-line no-process-exit
+  process.exit(1);
 }
 
-export function generateEncryptionKey() {
-  return randomBytes(32).toString('hex');
+export function generateEncryptionKey(mockBytes = false) {
+  return !mockBytes ? randomBytes(32).toString('hex') : mockBytes.toString('hex');
 }
 
-export function encryptString({key, value}) {
-  const iv = randomBytes(16);
+export function encryptString({key, value}, mockBytes = false) {
+  const iv = !mockBytes ? randomBytes(16) : mockBytes;
   const Cipher = createCipheriv('aes-256-ctr', Buffer.from(key, 'hex'), iv);
   const encrypted = Cipher.update(value, 'utf8');
   return Buffer.concat([iv, encrypted, Cipher.final()]).toString('base64');
@@ -104,7 +104,7 @@ export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
   if (arrayOfKeysWanted.length > 0) {
     arrayOfKeysWanted.forEach(wantedKey => {
       if (objectToBeJoined[wantedKey] !== undefined) {
-        obj[wantedKey] = objectToBeJoined[wantedKey]; // eslint-disable-line functional/immutable-data
+        obj[wantedKey] = objectToBeJoined[wantedKey];
         return;
       }
     });
@@ -114,7 +114,7 @@ export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
 
   Object.keys(objectToBeJoined).forEach(key => {
     if (objectToBeJoined[key] !== undefined) {
-      obj[key] = objectToBeJoined[key]; // eslint-disable-line functional/immutable-data
+      obj[key] = objectToBeJoined[key];
       return;
     }
 
