@@ -1,2 +1,2 @@
 export {sendEmail} from './mailer.js';
-export * from './utils';
+export * from './utils.js';
