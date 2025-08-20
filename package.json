@@ -55,6 +55,7 @@
 		"@natlibfi/fixugen": "^3.0.0-alpha.5",
 		"@natlibfi/fixura": "^4.0.0-alpha.12",
 		"cross-env": "^7.0.3",
+		"esbuild": "^0.25.9",
 		"eslint": "^9.33.0"
 	}
 }
