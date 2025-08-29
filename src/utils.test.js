@@ -67,7 +67,12 @@ describe('utils', () => {
   });
 
   describe('logWait', () => {
-    it('Should print log nicely', () => {
+
+    it('Should be a function', () => {
+      assert.ok(typeof logWait === 'function');
+    });
+
+    it('Should not crash when logging', () => {
       const logger = createLogger();
       logWait(logger, 900000);
     });
