@@ -4,14 +4,21 @@ import {describe, it, afterEach, mock} from 'node:test';
 import assert from 'node:assert';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
+//import createDebugLogger from 'debug';
 import {
   readEnvironmentVariable,
   generateEncryptionKey, encryptString, decryptString,
-  joinObjects, createWebhookOperator
+  joinObjects, createWebhookOperator,
+  logWait,
+  createLogger
 } from './utils.js';
 
 const FIXTURES_PATH = path.join(import.meta.dirname, '../test-fixtures/utils');
 
+//const debug = createDebugLogger('@natlibfi/melinda-backend-commons:utils:test');
+//const debugData = debug.extend('data');
+
+// eslint-disable-next-line max-lines-per-function
 describe('utils', () => {
   describe('readEnvironmentVariable', () => {
     afterEach(() => {
@@ -59,6 +66,13 @@ describe('utils', () => {
     });
   });
 
+  describe('logWait', () => {
+    it('Should print log nicely', () => {
+      const logger = createLogger();
+      logWait(logger, 900000);
+    });
+  });
+
   describe('encryptString', () => {
     it('Should encrypt the string', () => {
       const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/bytes.txt'), 'utf8');
@@ -81,6 +95,7 @@ describe('utils', () => {
     });
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe('createWebhookOperator', () => {
     const webhookDomain = 'https://foo.bar';
     const webhookPath = '/foo/bar/1234';

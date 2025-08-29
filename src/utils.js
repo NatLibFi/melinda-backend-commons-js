@@ -2,7 +2,7 @@ import expressWinston from 'express-winston';
 import winston from 'winston';
 import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
-import prettyPrint from 'pretty-print-ms';
+import prettyMilliseconds from 'pretty-ms';
 import createDebugLogger from 'debug';
 
 import {generateBasicNotification, generateBlobNotification} from './notificationTemplates.js';
@@ -88,15 +88,18 @@ export function decryptString({key, value}) {
 }
 
 export function logWait(logger, waitTime) {
+  //const debug = createDebugLogger('@natlibfi/melinda-backend-commons:utils:logWait');
+  //const debugData = debug.extend('data');
+
   // 900000 ms = 15 min
   if (waitTime % 900000 === 0) {
-    return logger.verbose(`Total wait: ${prettyPrint(waitTime)}`);
+    return logger.verbose(`Total wait: ${prettyMilliseconds(waitTime)}`);
   }
   // 60000ms = 1min
   if (waitTime % 60000 === 0) {
-    return logger.debug(`Total wait: ${prettyPrint(waitTime)}`);
+    return logger.debug(`Total wait: ${prettyMilliseconds(waitTime)}`);
   }
-  return logger.silly(`Total wait: ${prettyPrint(waitTime)}`);
+  return logger.silly(`Total wait: ${prettyMilliseconds(waitTime)}`);
 }
 
 export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
