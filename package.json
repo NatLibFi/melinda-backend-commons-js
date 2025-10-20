@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-backend-commons-js.git"
 	},
 	"license": "MIT",
-	"version": "3.0.0-alpha.7",
+	"version": "3.0.0-alpha.8",
 	"main": "./dist/index.js",
 	"type": "module",
 	"bin": {
