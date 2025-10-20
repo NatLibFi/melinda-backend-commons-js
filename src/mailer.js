@@ -46,8 +46,8 @@ export async function sendEmail({messageOptions = false, smtpConfig = false}) {
 
 function templateHandling(templateName, context) {
   // Load templates
-  const template = readFileSync(path.resolve(__dirname, 'templates', `${templateName}.html`), 'utf8');
-  const templateFooter = readFileSync(path.resolve(__dirname, 'templates', 'footer.html'), 'utf8');
+  const template = readFileSync(path.resolve(import.meta.dirname, 'templates', `${templateName}.html`), 'utf8');
+  const templateFooter = readFileSync(path.resolve(import.meta.dirname, 'templates', 'footer.html'), 'utf8');
   // Fill template
   if (templateName === 'poistot') {
     return fillTemplatePoistot();
