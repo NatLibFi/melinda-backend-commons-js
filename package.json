@@ -30,7 +30,7 @@
 	},
 	"scripts": {
 		"prepare": "npm run build",
-		"build": "esbuild \"src/**/*.js\" --sourcemap --platform=node --outdir=dist",
+		"build": "node build.js",
 		"lint": "eslint ./src",
 		"lint:dev": "eslint --fix ./src",
 		"test:base": "node --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
