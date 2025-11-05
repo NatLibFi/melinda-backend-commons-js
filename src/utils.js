@@ -2,8 +2,8 @@ import expressWinston from 'express-winston';
 import winston from 'winston';
 import moment from 'moment';
 import {createCipheriv, createDecipheriv, randomBytes} from 'crypto';
-import prettyMilliseconds from 'pretty-ms';
 import createDebugLogger from 'debug';
+import {millisecondsToString} from './millisecondsToString.js';
 
 import {generateBasicNotification, generateBlobNotification} from './notificationTemplates.js';
 
@@ -93,13 +93,13 @@ export function logWait(logger, waitTime) {
 
   // 900000 ms = 15 min
   if (waitTime % 900000 === 0) {
-    return logger.verbose(`Total wait: ${prettyMilliseconds(waitTime)}`);
+    return logger.verbose(`Total wait: ${millisecondsToString(waitTime)}`);
   }
   // 60000ms = 1min
   if (waitTime % 60000 === 0) {
-    return logger.debug(`Total wait: ${prettyMilliseconds(waitTime)}`);
+    return logger.debug(`Total wait: ${millisecondsToString(waitTime)}`);
   }
-  return logger.silly(`Total wait: ${prettyMilliseconds(waitTime)}`);
+  return logger.silly(`Total wait: ${millisecondsToString(waitTime)}`);
 }
 
 export function joinObjects(obj, objectToBeJoined, arrayOfKeysWanted = []) {
