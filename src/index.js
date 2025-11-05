@@ -1,2 +1,3 @@
 export {sendEmail} from './mailer.js';
-export * from './utils';
+export {millisecondsToString} from './millisecondsToString.js';
+export * from './utils.js';

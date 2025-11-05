@@ -1,149 +1,145 @@
 import fs from 'fs';
 import path from 'path';
-import {expect, assert} from 'chai';
-import nock from 'nock'; // As of 2024-02-15 requires beta for Node experimental native fetch to work
+import {describe, it, afterEach, mock} from 'node:test';
+import assert from 'node:assert';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
+//import createDebugLogger from 'debug';
 import {
   readEnvironmentVariable,
   generateEncryptionKey, encryptString, decryptString,
-  __RewireAPI__ as RewireAPI,
-  joinObjects,
-  createWebhookOperator
-} from './utils';
+  joinObjects, createWebhookOperator,
+  logWait,
+  createLogger
+} from './utils.js';
 
-const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/utils');
+const FIXTURES_PATH = path.join(import.meta.dirname, '../test-fixtures/utils');
 
+//const debug = createDebugLogger('@natlibfi/melinda-backend-commons:utils:test');
+//const debugData = debug.extend('data');
+
+// eslint-disable-next-line max-lines-per-function
 describe('utils', () => {
   describe('readEnvironmentVariable', () => {
     afterEach(() => {
-      delete process.env.FOO; // eslint-disable-line functional/immutable-data, no-process-env
+      delete process.env.FOO;
     });
 
     it('Should read a environment variable', () => {
-      process.env.FOO = 'bar';// eslint-disable-line functional/immutable-data, no-process-env
-      expect(readEnvironmentVariable('FOO')).to.equal('bar');
+      process.env.FOO = 'bar';
+      assert.equal(readEnvironmentVariable('FOO'), 'bar');
     });
 
     it('Should use  a default value for environment variable', () => {
-      expect(readEnvironmentVariable('FOO', {defaultValue: 'fubar'})).to.equal('fubar');
+      assert.equal(readEnvironmentVariable('FOO', {defaultValue: 'fubar'}), 'fubar');
     });
 
     it('Should use a boolean default value for environment variable', () => {
-      expect(readEnvironmentVariable('FOO', {defaultValue: false})).to.equal(false);
+      assert.equal(readEnvironmentVariable('FOO', {defaultValue: false}), false);
     });
 
     it('Should not log the default value for environment variable', () => {
-      expect(readEnvironmentVariable('FOO', {defaultValue: 'fubar', hideDefault: true})).to.equal('fubar');
+      assert.equal(readEnvironmentVariable('FOO', {defaultValue: 'fubar', hideDefault: true}), 'fubar');
     });
 
     it('Should throw because mandatory variable is missing', () => {
-      expect(() => {
+      try {
         readEnvironmentVariable('FOO');
-      }).to.throw(Error, /^Mandatory environment variable missing: FOO$/u);
+      } catch (error) {
+        assert(error instanceof Error);
+        assert.match(error.message, /^Mandatory environment variable missing: FOO$/u);
+      }
     });
 
     it('Should format the variable', () => {
-      process.env.FOO = '1'; // eslint-disable-line functional/immutable-data, no-process-env
-      expect(readEnvironmentVariable('FOO', {format: v => Number(v)})).to.equal(1);
+      process.env.FOO = '1';
+      assert.equal(readEnvironmentVariable('FOO', {format: v => Number(v)}), 1);
     });
   });
 
   describe('generateEncryptionKey', () => {
-    afterEach(() => {
-      RewireAPI.__ResetDependency__('randomBytes');
-    });
-
     it('Should generate the expected key', () => {
       const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'generateEncryptionKey/bytes.txt'), 'utf8');
       const expectedKey = fs.readFileSync(path.join(FIXTURES_PATH, 'generateEncryptionKey/expectedKey.txt'), 'utf8');
 
-      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
+      assert.equal(generateEncryptionKey(Buffer.from(bytes, 'hex')), expectedKey);
+    });
+  });
 
-      expect(generateEncryptionKey()).to.equal(expectedKey);
+  describe('logWait', () => {
+
+    it('Should be a function', () => {
+      assert.ok(typeof logWait === 'function');
+    });
+
+    it('Should not crash when logging', () => {
+      const logger = createLogger();
+      logWait(logger, 900000);
     });
   });
 
   describe('encryptString', () => {
-    afterEach(() => {
-      RewireAPI.__ResetDependency__('randomBytes');
-    });
-
     it('Should encrypt the string', () => {
       const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/bytes.txt'), 'utf8');
       const key = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/key1.txt'), 'utf8');
       const value = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/string1.txt'), 'utf8');
       const expectedValue = fs.readFileSync(path.join(FIXTURES_PATH, 'encryptString/expectedValue1.txt'), 'utf8');
 
-      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
-
-      expect(encryptString({key, value})).to.equal(expectedValue);
+      assert.equal(encryptString({key, value}, Buffer.from(bytes, 'hex')), expectedValue);
     });
   });
 
   describe('descryptString', () => {
-    afterEach(() => {
-      RewireAPI.__ResetDependency__('randomBytes');
-    });
-
     it('Should decrypt the string', () => {
-      const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/bytes.txt'), 'utf8');
+      //const bytes = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/bytes.txt'), 'utf8');
       const key = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/key1.txt'), 'utf8');
       const value = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/string1.txt'), 'utf8');
       const expectedValue = fs.readFileSync(path.join(FIXTURES_PATH, 'decryptString/expectedValue1.txt'), 'utf8');
 
-      RewireAPI.__Rewire__('randomBytes', () => Buffer.from(bytes, 'hex'));
-
-      expect(decryptString({key, value})).to.equal(expectedValue);
+      assert.equal(decryptString({key, value}), expectedValue);
     });
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe('createWebhookOperator', () => {
     const webhookDomain = 'https://foo.bar';
     const webhookPath = '/foo/bar/1234';
     const webhookUrl = `${webhookDomain}${webhookPath}`;
 
-    after(() => {
-      nock.cleanAll();
-      nock.enableNetConnect(); // Re--enable sending http request to anywhere
-    });
-
-    before(() => {
-      nock.disableNetConnect(); // Disallow sending http request to anywhere else but pre-defined scopes
-    });
-
-    beforeEach(() => {
-      nock.cleanAll(); // Make sure previous mocks do not affect the currently starting test
+    afterEach(() => {
+      mock.reset();
     });
 
     it('Should return interface with sendNotification function that sends request to webhook URL', async () => {
       const notificationText = 'Foo';
 
-      // Nock interceptor to mock HTTP request response
-      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath, body => expect(body).to.eql({text: notificationText}))
-        .reply(200);
+      // mock interceptor to mock HTTP request response
+      mock.method(global, 'fetch', (url, {body}) => {
+        assert.equal(url, webhookUrl);
+        assert.deepEqual(JSON.parse(body), {text: notificationText});
+        return {ok: true};
+      });
 
       const webhookOperator = createWebhookOperator(webhookUrl);
       const result = await webhookOperator.sendNotification(notificationText);
 
-      expect(result).to.eq(true);
-      expect(scope.isDone()).to.eq(true);
+      assert.equal(result, true);
     });
 
     it('Should send request to webhook URL with blob template and default values', async () => {
       const expectedBody = fs.readFileSync(path.join(FIXTURES_PATH, 'sendNotification/templateBlobDefault.json'), 'utf8');
 
-      // Nock interceptor to mock HTTP request response
-      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath, body => expect(body).to.eql(JSON.parse(expectedBody)))
-        .reply(200);
+      // mock interceptor to mock HTTP request response
+      mock.method(global, 'fetch', (url, {body}) => {
+        assert.equal(url, webhookUrl);
+        assert.deepEqual(JSON.parse(body), JSON.parse(expectedBody));
+        return {ok: true};
+      });
 
       const webhookOperator = createWebhookOperator(webhookUrl);
       const result = await webhookOperator.sendNotification({}, {template: 'blob'});
 
-      expect(result).to.eq(true);
-      expect(scope.isDone()).to.eq(true);
+      assert.equal(result, true);
     });
 
     it('Should send request to webhook URL with blob template custom values', async () => {
@@ -167,58 +163,63 @@ describe('utils', () => {
 
       const expectedBody = fs.readFileSync(path.join(FIXTURES_PATH, 'sendNotification/templateBlobCustom.json'), 'utf8');
 
-      // Nock interceptor to mock HTTP request response
-      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        //.post(webhookPath, body => console.log(JSON.stringify(body))) // eslint-disable-line
-        .post(webhookPath, body => expect(body).to.eql(JSON.parse(expectedBody)))
-        .reply(200);
+      // mock interceptor to mock HTTP request response
+      mock.method(global, 'fetch', (url, {body}) => {
+        assert.equal(url, webhookUrl);
+        assert.deepEqual(JSON.parse(body), JSON.parse(expectedBody));
+        return {ok: true};
+      });
 
       const webhookOperator = createWebhookOperator(webhookUrl);
       const result = await webhookOperator.sendNotification(notificationText, options);
 
-      expect(result).to.eq(true);
-      expect(scope.isDone()).to.eq(true);
+      assert.equal(result, true);
     });
 
     it('Should return test interface with sendNotification function that mocks request', async () => {
       const notificationText = {text: 'Foo'};
-      // Nock interceptor to mock HTTP request response
-      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath)
-        .reply(200);
 
       const webhookOperator = createWebhookOperator('test');
       const result = await webhookOperator.sendNotification(notificationText);
 
-      expect(result).to.eq(true);
-      expect(scope.isDone()).to.eq(false);
+      assert.equal(result, true);
     });
 
     it('Should return test interface with sendNotification function that mocks failing request', () => {
       const notificationText = {text: 'Foo'};
-      // Nock interceptor to mock HTTP request response
-      const scope = nock(webhookDomain, {reqheaders: {type: 'application/json'}})
-        .post(webhookPath)
-        .reply(200);
 
       const webhookOperator = createWebhookOperator('test');
-      assert.throws(() => webhookOperator.sendNotification(notificationText, {fail: true}), Error, 'HTTP response status was not ok (MOCK)');
-      expect(scope.isDone()).to.eq(false);
+      try {
+        webhookOperator.sendNotification(notificationText, {fail: true});
+      } catch (error) {
+        assert(error instanceof Error);
+        assert.equal(error.message, 'HTTP response status was not ok (MOCK)');
+      }
     });
 
     it('Should throw error when initializing interface without URL', () => {
-      expect(() => createWebhookOperator()).to.throw('Webhook URL is not defined');
+      try {
+        createWebhookOperator();
+      } catch (error) {
+        assert(error instanceof Error);
+        assert.equal(error.message, 'Webhook URL is not defined');
+      }
     });
 
     it('Should throw error when initializing interface with URL that uses http', () => {
-      expect(() => createWebhookOperator('http://foobar')).to.throw('Webhook URL needs to use https');
+      try {
+        createWebhookOperator('http://foobar');
+      } catch (error) {
+        assert(error instanceof Error);
+        assert.equal(error.message, 'Webhook URL needs to use https');
+      }
     });
   });
 });
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'utils', 'joinObjects'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'utils', 'joinObjects'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -243,17 +244,17 @@ function testJoinObjects({getFixture, arrayOfKeysWanted = false}) {
 
   if (arrayOfKeysWanted) {
     joinObjects(originalObj, objectToBeJoined, arrayOfKeysWanted);
-    expect(originalObj).to.eql(resultObject);
+    assert.deepEqual(originalObj, resultObject);
     return;
   }
 
   joinObjects(originalObj, objectToBeJoined);
-  expect(originalObj).to.eql(resultObject);
+  assert.deepEqual(originalObj, resultObject);
 
   function undefineValues(obj) {
     Object.keys(obj).forEach(key => {
       if (obj[key] === 'undefined') {
-        obj[key] = undefined; // eslint-disable-line functional/immutable-data
+        obj[key] = undefined;
         return;
       }
     });
