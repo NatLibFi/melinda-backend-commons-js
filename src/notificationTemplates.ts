@@ -1,5 +1,38 @@
-export function generateBasicNotification(text) {
-  return {text};
+interface basicNotificationContext {
+  text: string
+}
+
+interface basicNotificationResult {
+  text: string
+}
+
+export function generateBasicNotification(basicContext: basicNotificationContext, _: sendNotificationOpts): basicNotificationResult {
+  return {text: basicContext.text};
+}
+
+interface blobNotificationContext {
+  profile?: string,
+  id?: string,
+  correlationId?: string,
+  numberOfRecords?: number,
+  failedRecords?: number,
+  processedRecords?: number,
+  created?: number,
+  updated?: number,
+  skipped?: number,
+  error?: number,
+}
+
+// Same as in utils
+interface sendNotificationOpts {
+  environment?: false | string,
+  linkUrl?: string,
+  template: string | false,
+  fail?: boolean
+}
+
+interface blobNotificationResult {
+  blocks: any[],
 }
 
 export function generateBlobNotification({
@@ -13,7 +46,7 @@ export function generateBlobNotification({
   updated = 0,
   skipped = 0,
   error = 0
-}, {environment = false, linkUrl = ''}) {
+}: blobNotificationContext, {environment = false, linkUrl = ''}: sendNotificationOpts): blobNotificationResult {
   return {
     'blocks': [
       {

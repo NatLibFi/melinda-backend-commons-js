@@ -1,4 +1,4 @@
-import {sendEmail} from './mailer';
+import {sendEmail} from './mailer.js';
 import fs from 'fs';
 import yargs from 'yargs';
 import {createLogger, handleInterrupt} from './utils.js';
@@ -45,7 +45,7 @@ async function run() {
 
   // console.log(JSON.stringify(args));
   logger.info(`Reading context file ${args._[0]}`);
-  const context = JSON.parse(fs.readFileSync(args._[0], {encoding: 'UTF-8'}));
+  const context = JSON.parse(fs.readFileSync(args._[0], {encoding: 'utf-8'}));
   logger.info('Reading smtp config from env');
   const smtpConfig = JSON.parse(args.smtpConfig);
   const messageOptions = {
@@ -59,15 +59,20 @@ async function run() {
   logger.debug(JSON.stringify(messageOptions));
   logger.debug(JSON.stringify(smtpConfig));
   if (messageOptions.test) {
-    const {html, text} = await sendEmail({smtpConfig, messageOptions});
-    logger.info('Test run!');
-    logger.info('***---***');
-    logger.info(`HTML string:\n${html}`);
-    logger.info('***---***');
-    logger.info(`Text string:\n${text}`);
-    logger.info('***---***');
+    const result = await sendEmail({smtpConfig, messageOptions});
+    if (result) {
+      const {html, text} = result;
+      logger.info('Test run!');
+      logger.info('***---***');
+      logger.info(`HTML string:\n${html}`);
+      logger.info('***---***');
+      logger.info(`Text string:\n${text}`);
+      logger.info('***---***');
 
-    return;
+      return;
+    }
+
+    throw new Error('test failed!');
   }
 
   await sendEmail({smtpConfig, messageOptions});

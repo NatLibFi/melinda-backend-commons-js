@@ -5,7 +5,26 @@ import {readFileSync} from 'node:fs';
 
 import {createLogger} from './utils.js';
 
-export async function sendEmail({messageOptions = false, smtpConfig = false}) {
+interface messageOptions {
+  from: string,
+  to: string,
+  subject: string,
+  templateName: string,
+  context: any,
+  test: boolean
+}
+
+interface sendEmailMsgOptions {
+  messageOptions: messageOptions,
+  smtpConfig: any
+}
+
+interface sendEmailTestResult {
+  html: string,
+  text: string
+}
+
+export async function sendEmail({messageOptions, smtpConfig}: sendEmailMsgOptions): Promise<void | sendEmailTestResult> {
   if (!messageOptions || !smtpConfig) {
     throw new Error('Mailer is missing parametters');
   }
