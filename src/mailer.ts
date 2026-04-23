@@ -3,20 +3,20 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 import {readFileSync} from 'node:fs';
 
-import {createLogger} from './utils.js';
+import {createLogger} from './utils.ts';
 
 interface messageOptions {
   from: string,
   to: string,
   subject: string,
   templateName: string,
-  context: any,
+  context: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   test: boolean
 }
 
 interface sendEmailMsgOptions {
   messageOptions: messageOptions,
-  smtpConfig: any
+  smtpConfig: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 interface sendEmailTestResult {

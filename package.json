@@ -33,9 +33,9 @@
 		"copyTemplates": "cd dist && mkdir templates && cp -i ../src/templates/* ./templates/",
 		"lint": "eslint ./src",
 		"lint:dev": "eslint --fix ./src",
-		"test:base": "node --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
+		"test:base": "node --test --experimental-test-coverage --test-reporter=spec './src/utils.test.ts'",
 		"test": "npm run lint && npm run test:base",
-		"watch:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
+		"watch:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './src/utils.test.ts'",
 		"dev": "npm run watch:test",
 		"dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test npm run watch:test"
 	},
@@ -51,7 +51,7 @@
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^4.0.0-alpha.1",
-		"@natlibfi/fixura": "^5.0.0-alpha.3",
+		"@natlibfi/fixura": "^5.0.0-alpha.4",
 		"@types/node": "^25.6.0",
 		"cross-env": "^10.1.0",
 		"eslint": "^9.39.4",

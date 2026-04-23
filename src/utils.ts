@@ -4,17 +4,18 @@ import moment from 'moment';
 import {promisify} from 'util';
 
 import {createCipheriv, createDecipheriv, randomBytes} from 'node:crypto';
-import createDebugLogger from 'debug';
-import {millisecondsToString} from './millisecondsToString.js';
 
-import {generateBasicNotification, generateBlobNotification} from './notificationTemplates.js';
+import createDebugLogger from 'debug';
+import {millisecondsToString} from './millisecondsToString.ts';
+
+import {generateBasicNotification, generateBlobNotification} from './notificationTemplates.ts';
 
 const setTimeoutPromise = promisify(setTimeout);
 
 interface readEnvironmentVariableOptions {
-  defaultValue?: string | boolean | number | any[]
+  defaultValue?: string | boolean | number | any[] // eslint-disable-line @typescript-eslint/no-explicit-any
   hideDefault?: boolean | number,
-  format?: (arg: any) => any
+  format?: (arg: any) => any // eslint-disable-line no-unused-vars,@typescript-eslint/no-explicit-any
 }
 
 export function readEnvironmentVariable(name: string, {defaultValue = undefined, hideDefault = false, format = v => v}: readEnvironmentVariableOptions = {}) {
@@ -86,17 +87,22 @@ export function generateEncryptionKey(mockBytes: mockBytes = false) {
   return !mockBytes ? randomBytes(32).toString('hex') : mockBytes.toString('hex');
 }
 
-export function encryptString({key, value}, mockBytes: mockBytes = false) {
-  const iv = !mockBytes ? randomBytes(16) : mockBytes;
-  const Cipher = createCipheriv('aes-256-gcm', Buffer.from(key, 'hex'), iv);
-  const encrypted = Cipher.update(value, 'utf8');
-  return Buffer.concat([iv, encrypted, Cipher.final()]).toString('base64');
+export function encryptString({key, value}: {key: string; value: string}, mockIv?: Buffer) {
+  const iv = mockIv ?? randomBytes(16);
+  const cipher = createCipheriv('aes-256-gcm', Buffer.from(key, 'hex'), iv);
+  const encrypted = cipher.update(value, 'utf8');
+  cipher.final(); // on aes-256-gmc returns empty buffer and tag needs to be asked after
+  return Buffer.concat([iv, encrypted, cipher.getAuthTag()]).toString('base64');
 }
 
-export function decryptString({key, value}) {
+export function decryptString({key, value}: {key: string; value: string}) {
   const input = Buffer.from(value, 'base64');
-  const Decipher = createDecipheriv('aes-256-gcm', Buffer.from(key, 'hex'), input.subarray(0, 16));
-  return Decipher.update(input.subarray(16).toString(), 'utf8', 'utf8') + Decipher.final('utf8');
+  const iv = input.subarray(0, 16);
+  const ciphertext = input.subarray(16, input.length - 16);
+  const authTag = input.subarray(-16);
+  const decipher = createDecipheriv('aes-256-gcm', Buffer.from(key, 'hex'), iv).setAuthTag(authTag);
+  const decrypted = decipher.update(ciphertext);
+  return decrypted.toString('utf-8');
 }
 
 export function logWait(logger, waitTime) {
@@ -165,20 +171,17 @@ interface sendNotificationOpts {
 }
 
 interface createWebhookOperatorResponse {
+  // eslint-disable-next-line no-unused-vars
   sendNotification: (bodyData: basicNotificationContext | blobNotificationContext, options: sendNotificationOpts) => Promise<boolean>
 }
 
 export function createWebhookOperator(WEBHOOK_URL: webhookUrl = false): createWebhookOperatorResponse {
-  if (WEBHOOK_URL === false) {
-    throw new Error('WEBHOOK_URL missing');
+  if (WEBHOOK_URL === false || typeof WEBHOOK_URL !== 'string') {
+    throw new Error('Webhook URL is not defined');
   }
 
   const debug = createDebugLogger('@natlibfi/melinda-backend-commons:sendNotification');
   const URL = WEBHOOK_URL;
-
-  if (typeof URL !== 'string') {
-    throw new Error('Webhook URL is not defined');
-  }
 
   if (WEBHOOK_URL === 'test') {
     return {sendNotification: sendNotificationMock};
@@ -225,7 +228,7 @@ export function createWebhookOperator(WEBHOOK_URL: webhookUrl = false): createWe
 
   function prepareBodyData(bodyData, options) {
     if (options.template === 'basic') {
-      const objectAsBody = generateBasicNotification(bodyData, options);
+      const objectAsBody = generateBasicNotification(bodyData);
       return JSON.stringify(objectAsBody);
     }
 

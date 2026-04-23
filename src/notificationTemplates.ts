@@ -6,7 +6,7 @@ interface basicNotificationResult {
   text: string
 }
 
-export function generateBasicNotification(basicContext: basicNotificationContext, _: sendNotificationOpts): basicNotificationResult {
+export function generateBasicNotification(basicContext: basicNotificationContext): basicNotificationResult {
   return {text: basicContext.text};
 }
 
@@ -20,7 +20,7 @@ interface blobNotificationContext {
   created?: number,
   updated?: number,
   skipped?: number,
-  error?: number,
+  error?: number
 }
 
 // Same as in utils
@@ -32,7 +32,7 @@ interface sendNotificationOpts {
 }
 
 interface blobNotificationResult {
-  blocks: any[],
+  blocks: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function generateBlobNotification({

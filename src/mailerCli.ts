@@ -1,7 +1,7 @@
-import {sendEmail} from './mailer.js';
+import {sendEmail} from './mailer.ts';
 import fs from 'fs';
 import yargs from 'yargs';
-import {createLogger, handleInterrupt} from './utils.js';
+import {createLogger, handleInterrupt} from './utils.ts';
 run();
 
 async function run() {

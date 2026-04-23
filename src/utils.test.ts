@@ -11,7 +11,7 @@ import {
   joinObjects, createWebhookOperator,
   logWait,
   createLogger
-} from './utils.js';
+} from './utils.ts';
 
 const FIXTURES_PATH = path.join(import.meta.dirname, '../test-fixtures/utils');
 
@@ -219,12 +219,13 @@ describe('utils', () => {
 
 generateTests({
   callback,
-  path: [import.meta.dirname, '..', 'test-fixtures', 'utils', 'joinObjects'],
+  path: ['utils', 'joinObjects'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
     reader: READERS.JSON,
-    failWhenNotFound: true
+    failWhenNotFound: true,
+    root: [import.meta.dirname, '..', 'test-fixtures']
   }
 });
 
