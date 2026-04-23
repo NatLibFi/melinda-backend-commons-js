@@ -11,7 +11,7 @@ import {
   joinObjects, createWebhookOperator,
   logWait,
   createLogger
-} from './utils.js';
+} from './utils.ts';
 
 const FIXTURES_PATH = path.join(import.meta.dirname, '../test-fixtures/utils');
 
@@ -22,11 +22,11 @@ const FIXTURES_PATH = path.join(import.meta.dirname, '../test-fixtures/utils');
 describe('utils', () => {
   describe('readEnvironmentVariable', () => {
     afterEach(() => {
-      delete process.env.FOO;
+      delete process.env['FOO'];
     });
 
     it('Should read a environment variable', () => {
-      process.env.FOO = 'bar';
+      process.env['FOO'] = 'bar';
       assert.equal(readEnvironmentVariable('FOO'), 'bar');
     });
 
@@ -52,7 +52,7 @@ describe('utils', () => {
     });
 
     it('Should format the variable', () => {
-      process.env.FOO = '1';
+      process.env['FOO'] = '1';
       assert.equal(readEnvironmentVariable('FOO', {format: v => Number(v)}), 1);
     });
   });
@@ -121,7 +121,7 @@ describe('utils', () => {
       });
 
       const webhookOperator = createWebhookOperator(webhookUrl);
-      const result = await webhookOperator.sendNotification(notificationText);
+      const result = await webhookOperator.sendNotification({text: notificationText}, {template: false});
 
       assert.equal(result, true);
     });
@@ -137,7 +137,7 @@ describe('utils', () => {
       });
 
       const webhookOperator = createWebhookOperator(webhookUrl);
-      const result = await webhookOperator.sendNotification({}, {template: 'blob'});
+      const result = await webhookOperator.sendNotification({text: ''}, {template: 'blob'});
 
       assert.equal(result, true);
     });
@@ -180,7 +180,7 @@ describe('utils', () => {
       const notificationText = {text: 'Foo'};
 
       const webhookOperator = createWebhookOperator('test');
-      const result = await webhookOperator.sendNotification(notificationText);
+      const result = await webhookOperator.sendNotification(notificationText, {template: false});
 
       assert.equal(result, true);
     });
@@ -190,7 +190,7 @@ describe('utils', () => {
 
       const webhookOperator = createWebhookOperator('test');
       try {
-        webhookOperator.sendNotification(notificationText, {fail: true});
+        webhookOperator.sendNotification(notificationText, {template: false, fail: true});
       } catch (error) {
         assert(error instanceof Error);
         assert.equal(error.message, 'HTTP response status was not ok (MOCK)');
@@ -219,7 +219,7 @@ describe('utils', () => {
 
 generateTests({
   callback,
-  path: [import.meta.dirname, '..', 'test-fixtures', 'utils', 'joinObjects'],
+  path: [FIXTURES_PATH, 'joinObjects'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -237,18 +237,12 @@ function callback(testConf) {
   throw new Error('Test type not set!');
 }
 
-function testJoinObjects({getFixture, arrayOfKeysWanted = false}) {
+function testJoinObjects({getFixture, arrayOfKeysWanted = []}) {
   const originalObj = getFixture('originalObj.json');
   const objectToBeJoined = undefineValues(getFixture('ojectToBeJoined.json'));
   const resultObject = getFixture('resultObject.json');
 
-  if (arrayOfKeysWanted) {
-    joinObjects(originalObj, objectToBeJoined, arrayOfKeysWanted);
-    assert.deepEqual(originalObj, resultObject);
-    return;
-  }
-
-  joinObjects(originalObj, objectToBeJoined);
+  joinObjects(originalObj, objectToBeJoined, arrayOfKeysWanted);
   assert.deepEqual(originalObj, resultObject);
 
   function undefineValues(obj) {

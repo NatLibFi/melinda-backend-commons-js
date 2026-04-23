@@ -3,9 +3,28 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 import {readFileSync} from 'node:fs';
 
-import {createLogger} from './utils.js';
+import {createLogger} from './utils.ts';
 
-export async function sendEmail({messageOptions = false, smtpConfig = false}) {
+interface messageOptions {
+  from: string,
+  to: string,
+  subject: string,
+  templateName: string,
+  context: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  test: boolean
+}
+
+interface sendEmailMsgOptions {
+  messageOptions: messageOptions,
+  smtpConfig: any // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+interface sendEmailTestResult {
+  html: string,
+  text: string
+}
+
+export async function sendEmail({messageOptions, smtpConfig}: sendEmailMsgOptions): Promise<void | sendEmailTestResult> {
   if (!messageOptions || !smtpConfig) {
     throw new Error('Mailer is missing parametters');
   }
