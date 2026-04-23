@@ -219,13 +219,12 @@ describe('utils', () => {
 
 generateTests({
   callback,
-  path: ['utils', 'joinObjects'],
+  path: [FIXTURES_PATH, 'joinObjects'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
     reader: READERS.JSON,
-    failWhenNotFound: true,
-    root: [import.meta.dirname, '..', 'test-fixtures']
+    failWhenNotFound: true
   }
 });
 
