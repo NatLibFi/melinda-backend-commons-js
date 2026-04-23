@@ -22,7 +22,7 @@
 		"mailer": "./dist/mailerCli.js"
 	},
 	"engines": {
-		"node": ">=22"
+		"node": ">=24"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -30,7 +30,7 @@
 	"scripts": {
 		"prepare": "npm run build",
 		"build": "tsc && npm run copyTemplates",
-		"copyTemplates": "cd dist && mkdir templates && cp -i ../src/templates/* ./templates/",
+		"copyTemplates": "cd dist && mkdir templates && cp -ip ../src/templates/* ./templates/",
 		"lint": "eslint ./src",
 		"lint:dev": "eslint --fix ./src",
 		"test:base": "node --test --experimental-test-coverage --test-reporter=spec './src/utils.test.ts'",
