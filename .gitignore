@@ -6,3 +6,8 @@ dist
 configCrowd.js
 .DS_Store
 .env
+
+# AI agent files
+.pi/
+AGENTS.md
+CONTEXT.md
