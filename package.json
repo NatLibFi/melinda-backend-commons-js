@@ -13,13 +13,12 @@
 		"url": "https://github.com/NatLibFi/melinda-backend-commons-js"
 	},
 	"license": "MIT",
-	"version": "4.0.0-alpha.2",
+	"version": "5.0.0-alpha.1",
 	"main": "./dist/index.js",
 	"type": "module",
 	"bin": {
 		"gen-jwt-token": "./dist/gen-jwt-token.js",
-		"gen-encryption-key": "./dist/gen-encryption-key.js",
-		"mailer": "./dist/mailerCli.js"
+		"gen-encryption-key": "./dist/gen-encryption-key.js"
 	},
 	"engines": {
 		"node": ">=24"
@@ -29,8 +28,7 @@
 	},
 	"scripts": {
 		"prepare": "npm run build",
-		"build": "tsc && npm run copyTemplates",
-		"copyTemplates": "node -e \"require('node:fs').cpSync('src/templates', 'dist/templates', {recursive: true, force: false})\"",
+		"build": "tsc",
 		"lint": "eslint ./src",
 		"lint:dev": "eslint --fix ./src",
 		"test:base": "node --test --experimental-test-coverage --test-reporter=spec './src/utils.test.ts'",
@@ -42,12 +40,9 @@
 	"dependencies": {
 		"base64-url": "^2.3.3",
 		"debug": "^4.4.3",
-		"html-to-text": "^9.0.5",
 		"moment": "^2.31.0",
 		"morgan": "^1.10.1",
-		"nodemailer": "^10.0.12",
-		"winston": "^3.19.0",
-		"yargs": "^18.2.0"
+		"winston": "^3.19.0"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^4.0.0-alpha.1",
