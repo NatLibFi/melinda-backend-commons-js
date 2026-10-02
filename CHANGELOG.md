@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.0-alpha.3
+
+- Promote `@natlibfi/fixugen` (4.0.0) and `@natlibfi/fixura` (5.0.0) devDeps from alpha to stable. No runtime changes.
+
 ## 5.0.0-alpha.2
 
 - No functional changes. Packaging/CI only: expanded `.npmignore` (workspace docs & repo tooling no longer shipped in the tarball) and CI now tests Node 24 + 26 with `actions/checkout`/`actions/setup-node` v7.
