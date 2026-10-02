@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.0-alpha.2
+
+- No functional changes. Packaging/CI only: expanded `.npmignore` (workspace docs & repo tooling no longer shipped in the tarball) and CI now tests Node 24 + 26 with `actions/checkout`/`actions/setup-node` v7.
+
 ## 5.0.0-alpha.1
 
 ### Breaking changes
